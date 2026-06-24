@@ -150,6 +150,12 @@ export default function ContactForm({ serviceOptions }: ContactFormProps) {
       formData.append('responsePreference', data.responsePreference)
       formData.append('instagramUser', data.instagramUser || '')
       formData.append('privacy', data.privacy ? 'on' : 'off')
+      // Tipo de mensaje + servicio (solicitud de servicio).
+      // Sin esto, el server action trata el envío como GENERAL
+      // y nunca guarda serviceId/customService en la DB.
+      formData.append('messageType', data.messageType ?? 'GENERAL')
+      if (data.serviceId) formData.append('serviceId', data.serviceId)
+      if (data.customService) formData.append('customService', data.customService)
       formData.append('recaptchaToken', token)
 
       const result = await sendContactEmail(formData)
@@ -294,6 +300,7 @@ export default function ContactForm({ serviceOptions }: ContactFormProps) {
               className="space-y-3 overflow-hidden"
             >
               <Select
+                variant="contact"
                 label="¿Qué servicio te interesa?"
                 value={selectedServiceId ?? ''}
                 onChange={(v) => setValue('serviceId', v, { shouldValidate: true })}

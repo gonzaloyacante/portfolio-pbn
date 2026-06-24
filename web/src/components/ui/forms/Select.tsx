@@ -22,8 +22,24 @@ interface SelectProps {
   searchable?: boolean
   clearable?: boolean
   label?: string
+  /**
+   * Variante visual. `default` usa los tokens genéricos `--public-select-*`.
+   * `contact` usa los tokens específicos `--public-contact-select-*` para
+   * matchear el look de los inputs del ContactForm.
+   * Default: `'default'`.
+   */
+  variant?: 'default' | 'contact'
 }
 
+/**
+ * Dropdown custom — NO usa el `<select>` nativo del browser.
+ *
+ * Estilos:
+ * - `.public-select` (clase base) + `.public-select-dropdown` / `.public-select-option`
+ *   / `.public-select-search` / `.public-select-error`
+ * - Variante `contact`: agrega `.public-contact-select` (mismo prefijo que el resto
+ *   del ContactForm) que re-mapea tokens a los de contact-field.
+ */
 export const Select = ({
   options,
   value,
@@ -37,6 +53,7 @@ export const Select = ({
   searchable = false,
   clearable = false,
   label,
+  variant = 'default',
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -67,37 +84,45 @@ export const Select = ({
     setSearchTerm('')
   }
 
+  const hasError = Boolean(error)
+  const errorMessage = typeof error === 'string' ? error : undefined
+  const variantClass = variant === 'contact' ? 'public-contact-select' : 'public-select'
+  const dropdownVariantClass =
+    variant === 'contact' ? 'public-contact-select-dropdown' : 'public-select-dropdown'
+  const optionVariantClass =
+    variant === 'contact' ? 'public-contact-select-option' : 'public-select-option'
+  const errorVariantClass =
+    variant === 'contact' ? 'public-contact-select-error' : 'public-select-error'
+
   return (
     <div ref={containerRef} className={cn('relative w-full', className)}>
       {label && (
-        <label htmlFor={id} className="text-foreground mb-2 block text-sm font-medium">
+        <label htmlFor={id} className="public-contact-form-label mb-2 block text-sm font-semibold">
           {label}
         </label>
       )}
       <button
         type="button"
         className={cn(
-          'flex h-10 w-full items-center justify-between px-3 py-2 text-left text-sm transition-all duration-200',
-          'bg-background rounded-lg border',
-          'border-input',
-          'hover:border-foreground/40',
-          'focus:ring-ring/20 focus:border-ring focus:ring-2 focus:outline-none',
+          variantClass,
+          'flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition-all sm:px-4',
           !disabled && 'cursor-pointer',
-          disabled && 'cursor-not-allowed opacity-60',
-          error && 'border-destructive focus:border-destructive focus:ring-destructive/20'
+          disabled && 'cursor-not-allowed opacity-60'
         )}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         id={id}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        data-open={isOpen}
+        data-state={hasError ? 'error' : undefined}
       >
         <span className="mr-2 min-w-0 flex-1 truncate">
-          <span className={value ? '' : 'text-muted-foreground'}>
+          <span className={value ? '' : 'public-select-placeholder'}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
         </span>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           {clearable && value && (
             <button
               type="button"
@@ -108,12 +133,12 @@ export const Select = ({
               className="hover:bg-muted rounded p-1"
               aria-label="Limpiar selección"
             >
-              <X className="text-muted-foreground h-4 w-4" />
+              <X className="public-select-chevron h-4 w-4" />
             </button>
           )}
           <ChevronDown
             className={cn(
-              'text-muted-foreground h-5 w-5 transition-transform duration-200',
+              'public-select-chevron h-5 w-5 transition-transform duration-200',
               isOpen && 'rotate-180'
             )}
           />
@@ -123,16 +148,19 @@ export const Select = ({
 
       {isOpen && (
         <ul
-          className="border-border bg-popover absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-lg border py-1 text-sm shadow-lg"
+          className={cn(
+            dropdownVariantClass,
+            'absolute right-0 left-0 z-50 mt-1 max-h-60 overflow-auto rounded-xl border py-1 text-sm shadow-xl'
+          )}
           role="listbox"
         >
           {searchable && (
-            <li className="bg-background sticky top-0 px-2 pb-1">
+            <li className="public-select-search sticky top-0 px-2 pt-1 pb-1">
               <input
                 ref={inputRef}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="focus:ring-ring/20 border-input bg-background text-foreground w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                className="public-select-search w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                 placeholder="Buscar..."
                 aria-label="Buscar opción"
                 autoFocus
@@ -146,14 +174,13 @@ export const Select = ({
             <li
               key={option.value}
               className={cn(
-                'mx-1 cursor-pointer rounded px-4 py-2 transition-colors',
-                option.value === value
-                  ? 'bg-primary text-primary-foreground font-semibold'
-                  : 'hover:bg-muted'
+                optionVariantClass,
+                'mx-1 cursor-pointer rounded-lg px-4 py-2 transition-colors'
               )}
               onClick={() => handleOptionClick(option.value)}
               role="option"
               aria-selected={option.value === value}
+              data-active={option.value === value}
             >
               <div className="flex items-center gap-2">
                 {option.value === value && <Check className="h-4 w-4" />}
@@ -163,8 +190,8 @@ export const Select = ({
           ))}
         </ul>
       )}
-      {error && typeof error === 'string' && (
-        <p className="text-destructive mt-1 text-xs font-medium">{error}</p>
+      {errorMessage && (
+        <p className={cn(errorVariantClass, 'mt-1 text-xs font-medium')}>{errorMessage}</p>
       )}
     </div>
   )

@@ -118,6 +118,41 @@
   --public-cookie-toggle-off: var(--primary);
   --public-cookie-toggle-knob: var(--background);
 
+  /* ── SELECT (genérico — reutilizable en toda la web) ───────────────── */
+  /* Tokens base para cualquier dropdown custom. Las páginas que usen
+     <Select/> heredan estos defaults y pueden sobrescribirlos en su scope
+     (ej. .public-contact-select re-mapea las variables a las del form). */
+  --public-select-bg: var(--background);
+  --public-select-border: var(--border);
+  --public-select-text: var(--foreground);
+  --public-select-placeholder: var(--muted-foreground);
+  --public-select-chevron: var(--muted-foreground);
+  --public-select-focus-border: var(--ring);
+  --public-select-dropdown-bg: var(--popover);
+  --public-select-dropdown-border: var(--border);
+  --public-select-dropdown-text: var(--popover-foreground);
+  --public-select-option-hover-bg: var(--muted);
+  --public-select-option-active-bg: var(--primary);
+  --public-select-option-active-text: var(--primary-foreground);
+  --public-select-error: #dc2626;
+  --public-select-search-bg: var(--background);
+  --public-select-search-border: var(--border);
+  --public-select-search-text: var(--foreground);
+
+  /* Override específico de la página de contacto: usa los tokens de contact-field
+     así el dropdown se ve igual que los inputs del form (mismos border, fondo, texto). */
+  --public-contact-select-bg: var(--public-contact-field-bg);
+  --public-contact-select-border: var(--public-contact-field-border);
+  --public-contact-select-text: var(--public-contact-field-text);
+  --public-contact-select-placeholder: var(--public-contact-field-placeholder);
+  --public-contact-select-focus-border: var(--public-contact-field-border);
+  --public-contact-select-dropdown-bg: var(--public-contact-option-bg);
+  --public-contact-select-dropdown-border: var(--public-contact-field-border);
+  --public-contact-select-dropdown-text: var(--public-contact-option-text);
+  --public-contact-select-option-hover-bg: var(--public-contact-option-active-bg);
+  --public-contact-select-option-active-bg: var(--primary);
+  --public-contact-select-option-active-text: var(--primary-foreground);
+
   --public-contact-form-surface: #fffdfd;
   --public-contact-form-border: #dcc3cd;
   --public-contact-form-title: var(--primary);
@@ -969,6 +1004,103 @@
 .public-contact-field:focus {
   outline: 2px solid var(--public-contact-field-border);
   outline-offset: 2px;
+}
+
+/* ── SELECT genérico ─────────────────────────────────────────────────── */
+/* Clase base reutilizable en toda la web. Estilos por scope (ej.
+   .public-contact-select) sobreescriben las vars para matchear
+   el look de cada página. El componente <Select/> en el UI kit
+   aplica `public-select` al wrapper y `public-select-dropdown` /
+   `public-select-option` / `public-select-search` al panel y opciones. */
+.public-select {
+  background-color: var(--public-select-bg);
+  border: 1px solid var(--public-select-border);
+  color: var(--public-select-text);
+}
+
+.public-select::placeholder {
+  color: var(--public-select-placeholder);
+  opacity: 0.65;
+}
+
+.public-select:focus,
+.public-select[data-open='true'] {
+  outline: 2px solid var(--public-select-focus-border);
+  outline-offset: 2px;
+}
+
+.public-select[data-state='error'] {
+  border-color: var(--public-select-error);
+  outline-color: var(--public-select-error);
+}
+
+.public-select-dropdown {
+  background-color: var(--public-select-dropdown-bg);
+  border: 1px solid var(--public-select-dropdown-border);
+  color: var(--public-select-dropdown-text);
+}
+
+.public-select-search {
+  background-color: var(--public-select-search-bg);
+  border: 1px solid var(--public-select-search-border);
+  color: var(--public-select-search-text);
+}
+
+.public-select-option:hover {
+  background-color: var(--public-select-option-hover-bg);
+}
+
+.public-select-option[aria-selected='true'],
+.public-select-option[data-active='true'] {
+  background-color: var(--public-select-option-active-bg);
+  color: var(--public-select-option-active-text);
+  font-weight: 600;
+}
+
+/* ── SELECT específico del ContactForm ─────────────────────────────────── */
+/* Re-mapea los tokens del select a los del contact-field para que el
+   dropdown se vea idéntico a los inputs del formulario. */
+.public-contact-select {
+  background-color: var(--public-contact-select-bg);
+  border: 1px solid var(--public-contact-select-border);
+  color: var(--public-contact-select-text);
+}
+
+.public-contact-select::placeholder {
+  color: var(--public-contact-select-placeholder);
+  opacity: 0.65;
+}
+
+.public-contact-select:focus,
+.public-contact-select[data-open='true'] {
+  outline: 2px solid var(--public-contact-select-focus-border);
+  outline-offset: 2px;
+}
+
+.public-contact-select[data-state='error'] {
+  border-color: var(--public-select-error);
+  outline-color: var(--public-select-error);
+}
+
+.public-contact-select-dropdown {
+  background-color: var(--public-contact-select-dropdown-bg);
+  border: 1px solid var(--public-contact-select-dropdown-border);
+  color: var(--public-contact-select-dropdown-text);
+}
+
+.public-contact-select-option:hover {
+  background-color: var(--public-contact-select-option-hover-bg);
+}
+
+.public-contact-select-option[aria-selected='true'],
+.public-contact-select-option[data-active='true'] {
+  background-color: var(--public-contact-select-option-active-bg);
+  color: var(--public-contact-select-option-active-text);
+  font-weight: 600;
+}
+
+.public-contact-select-error {
+  color: var(--public-select-error);
 }
 
 .public-contact-option {
