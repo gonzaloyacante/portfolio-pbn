@@ -289,6 +289,8 @@ describe('PATCH /api/admin/services/[id]', () => {
       makeRequest(BASE_URL, {
         method: 'PATCH',
         body: {
+          name: 'Test Service',
+          slug: 'test-service',
           pricingTiers: [{ name: 'Base', price: '150', description: null }],
         },
       }),
