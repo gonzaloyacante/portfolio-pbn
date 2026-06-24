@@ -5,10 +5,27 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     category: {
-      findUnique: vi.fn(),
+      findUnique: vi
+        .fn()
+        .mockResolvedValue({
+          id: 'cat-1',
+          deletedAt: null,
+          isActive: true,
+          sortOrder: 0,
+          slug: 'test',
+          name: 'Test',
+        }),
       update: vi.fn(),
       findUniqueOrThrow: vi.fn().mockResolvedValue({}),
-      findFirst: vi.fn().mockResolvedValue({}),
+      findFirst: vi
+        .fn()
+        .mockResolvedValue({
+          id: 'cat-1',
+          deletedAt: null,
+          isActive: true,
+          sortOrder: 0,
+          slug: 'test',
+        }),
       findFirstOrThrow: vi.fn().mockResolvedValue({}),
       findMany: vi.fn().mockResolvedValue({}),
       create: vi.fn().mockResolvedValue({}),
