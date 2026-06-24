@@ -207,6 +207,15 @@ export default async function PublicLayout({ children }: { children: React.React
           visibility={visibility}
           brandLogoUrl={homeSettings?.illustrationUrl}
           brandLogoAlt={homeSettings?.illustrationAlt || contactSettings?.ownerName || 'PBN'}
+          navbarScrimEnabled={homeSettings?.navbarScrimEnabled ?? true}
+          navbarScrimIntensity={homeSettings?.navbarScrimIntensity ?? 80}
+          navbarScrimHeightVh={homeSettings?.navbarScrimHeightVh ?? 45}
+          navbarScrimMobileEnabled={homeSettings?.navbarScrimMobileEnabled ?? true}
+          navbarScrimMobileIntensity={homeSettings?.navbarScrimMobileIntensity ?? 80}
+          navbarScrimMobileHeightVh={homeSettings?.navbarScrimMobileHeightVh ?? 45}
+          navbarScrimTabletEnabled={homeSettings?.navbarScrimTabletEnabled ?? true}
+          navbarScrimTabletIntensity={homeSettings?.navbarScrimTabletIntensity ?? 80}
+          navbarScrimTabletHeightVh={homeSettings?.navbarScrimTabletHeightVh ?? 45}
         />
         <main id="main-content" className="flex-1" tabIndex={-1}>
           <PageTransitionWrapper>{children}</PageTransitionWrapper>
