@@ -300,7 +300,6 @@ export default function ContactForm({ serviceOptions }: ContactFormProps) {
               className="space-y-3 overflow-hidden"
             >
               <Select
-                variant="contact"
                 label="¿Qué servicio te interesa?"
                 value={selectedServiceId ?? ''}
                 onChange={(v) => setValue('serviceId', v, { shouldValidate: true })}
@@ -310,6 +309,9 @@ export default function ContactForm({ serviceOptions }: ContactFormProps) {
                 ]}
                 error={errors.serviceId?.message}
                 placeholder="Elegí un servicio"
+                className="public-contact-field rounded-xl py-3 sm:px-4"
+                containerClassName="mb-0"
+                required
               />
               {selectedServiceId === OTHER_SERVICE_VALUE && (
                 <Input

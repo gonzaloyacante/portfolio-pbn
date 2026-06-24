@@ -1,44 +1,68 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useId } from 'react'
 import { X, Check, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-interface SelectOption {
+export interface SelectOption {
   value: string
   label: string
 }
 
-interface SelectProps {
+export interface SelectProps {
+  /** Options list */
   options: SelectOption[]
+  /** Selected value */
   value: string
+  /** Callback when value changes */
   onChange: (value: string) => void
+  /** Placeholder text when nothing is selected */
   placeholder?: string
+  /** Disable interaction */
   disabled?: boolean
-  className?: string
+  /** Show error state */
   error?: boolean | string
+  /** Hidden input name (for forms) */
   name?: string
+  /** Accessible id (paired with label) */
   id?: string
+  /** Enable search filter inside the dropdown */
   searchable?: boolean
+  /** Show clear (X) button when a value is selected */
   clearable?: boolean
+  /** Label text displayed above the trigger */
   label?: string
-  /**
-   * Variante visual. `default` usa los tokens genéricos `--public-select-*`.
-   * `contact` usa los tokens específicos `--public-contact-select-*` para
-   * matchear el look de los inputs del ContactForm.
-   * Default: `'default'`.
-   */
-  variant?: 'default' | 'contact'
+  /** Visual variant — same set as `Input` */
+  variant?: 'default' | 'filled' | 'ghost'
+  /** Size variant — same set as `Input` */
+  inputSize?: 'sm' | 'md' | 'lg'
+  /** Container class name */
+  containerClassName?: string
+  /** Trigger class name (for page-specific overrides) */
+  className?: string
+  /** Mark field as required (shows asterisk) */
+  required?: boolean
+}
+
+const sizeClasses = {
+  sm: 'h-8 text-xs px-2.5',
+  md: 'h-10 text-sm px-3',
+  lg: 'h-12 text-base px-4',
+}
+
+const variantClasses = {
+  default:
+    'border border-input bg-background text-foreground hover:border-foreground/40 focus:border-ring focus:ring-2 focus:ring-ring/20',
+  filled: 'border-0 bg-muted hover:bg-muted/80 focus:bg-background focus:ring-2 focus:ring-ring/20',
+  ghost: 'border-0 bg-transparent hover:bg-muted focus:bg-muted focus:ring-2 focus:ring-ring/20',
 }
 
 /**
- * Dropdown custom — NO usa el `<select>` nativo del browser.
- *
- * Estilos:
- * - `.public-select` (clase base) + `.public-select-dropdown` / `.public-select-option`
- *   / `.public-select-search` / `.public-select-error`
- * - Variante `contact`: agrega `.public-contact-select` (mismo prefijo que el resto
- *   del ContactForm) que re-mapea tokens a los de contact-field.
+ * Reusable dropdown — does NOT use the native `<select>` element.
+ * Follows the same pattern as `Input` and `Button`:
+ * - Tailwind-only styling via `cn()` + `variantClasses` (no CSS file dependency).
+ * - `variant` mirrors `Input` (`default | filled | ghost`).
+ * - Page-specific overrides come through `className`, not via component variants.
  */
 export const Select = ({
   options,
@@ -46,7 +70,6 @@ export const Select = ({
   onChange,
   placeholder = 'Selecciona una opción',
   disabled = false,
-  className = '',
   error = false,
   name,
   id,
@@ -54,11 +77,17 @@ export const Select = ({
   clearable = false,
   label,
   variant = 'default',
+  inputSize = 'md',
+  containerClassName,
+  className = '',
+  required,
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const generatedId = useId()
+  const triggerId = id || `select-${generatedId}`
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,9 +101,9 @@ export const Select = ({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const filteredOptions = options.filter((option) =>
-    !searchable ? true : option.label.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredOptions = searchable
+    ? options.filter((option) => option.label.toLowerCase().includes(searchTerm.toLowerCase()))
+    : options
 
   const selectedOption = options.find((option) => option.value === value)
 
@@ -86,41 +115,42 @@ export const Select = ({
 
   const hasError = Boolean(error)
   const errorMessage = typeof error === 'string' ? error : undefined
-  const variantClass = variant === 'contact' ? 'public-contact-select' : 'public-select'
-  const dropdownVariantClass =
-    variant === 'contact' ? 'public-contact-select-dropdown' : 'public-select-dropdown'
-  const optionVariantClass =
-    variant === 'contact' ? 'public-contact-select-option' : 'public-select-option'
-  const errorVariantClass =
-    variant === 'contact' ? 'public-contact-select-error' : 'public-select-error'
 
   return (
-    <div ref={containerRef} className={cn('relative w-full', className)}>
+    <div ref={containerRef} className={cn('w-full', containerClassName)}>
       {label && (
-        <label htmlFor={id} className="public-contact-form-label mb-2 block text-sm font-semibold">
+        <label htmlFor={triggerId} className="text-foreground mb-2 block text-sm font-medium">
           {label}
+          {required && <span className="text-destructive ml-1">*</span>}
         </label>
       )}
       <button
         type="button"
         className={cn(
-          variantClass,
-          'flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm transition-all sm:px-4',
+          'w-full rounded-lg transition-all duration-200 outline-none',
+          'flex items-center justify-between text-left',
+          'placeholder:text-muted-foreground',
+          'disabled:cursor-not-allowed disabled:opacity-50',
+          sizeClasses[inputSize],
+          variantClasses[variant],
           !disabled && 'cursor-pointer',
-          disabled && 'cursor-not-allowed opacity-60'
+          hasError && 'border-red-500 focus:border-red-500 focus:ring-red-200',
+          className
         )}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        id={id}
+        id={triggerId}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        data-open={isOpen}
-        data-state={hasError ? 'error' : undefined}
+        aria-invalid={hasError}
+        aria-required={required}
       >
-        <span className="mr-2 min-w-0 flex-1 truncate">
-          <span className={value ? '' : 'public-select-placeholder'}>
-            {selectedOption ? selectedOption.label : placeholder}
-          </span>
+        <span className="min-w-0 flex-1 truncate">
+          {selectedOption ? (
+            selectedOption.label
+          ) : (
+            <span className="text-muted-foreground">{placeholder}</span>
+          )}
         </span>
         <div className="flex shrink-0 items-center gap-1">
           {clearable && value && (
@@ -130,15 +160,15 @@ export const Select = ({
                 e.stopPropagation()
                 onChange('')
               }}
-              className="hover:bg-muted rounded p-1"
+              className="text-muted-foreground hover:text-foreground rounded p-1 transition-colors"
               aria-label="Limpiar selección"
             >
-              <X className="public-select-chevron h-4 w-4" />
+              <X className="h-4 w-4" />
             </button>
           )}
           <ChevronDown
             className={cn(
-              'public-select-chevron h-5 w-5 transition-transform duration-200',
+              'text-muted-foreground h-5 w-5 transition-transform duration-200',
               isOpen && 'rotate-180'
             )}
           />
@@ -149,38 +179,38 @@ export const Select = ({
       {isOpen && (
         <ul
           className={cn(
-            dropdownVariantClass,
-            'absolute right-0 left-0 z-50 mt-1 max-h-60 overflow-auto rounded-xl border py-1 text-sm shadow-xl'
+            'border-input bg-popover text-popover-foreground',
+            'absolute right-0 left-0 z-50 mt-1 max-h-60 overflow-auto rounded-lg border py-1 text-sm shadow-xl'
           )}
           role="listbox"
         >
           {searchable && (
-            <li className="public-select-search sticky top-0 px-2 pt-1 pb-1">
+            <li className="bg-popover sticky top-0 px-2 pt-1 pb-1">
               <input
                 ref={inputRef}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="public-select-search w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/20 w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                 placeholder="Buscar..."
                 aria-label="Buscar opción"
                 autoFocus
               />
             </li>
           )}
-          {options.length === 0 && (
+          {filteredOptions.length === 0 && (
             <li className="text-muted-foreground px-4 py-2">Sin opciones</li>
           )}
           {filteredOptions.map((option) => (
             <li
               key={option.value}
               className={cn(
-                optionVariantClass,
-                'mx-1 cursor-pointer rounded-lg px-4 py-2 transition-colors'
+                'mx-1 cursor-pointer rounded-md px-4 py-2 transition-colors',
+                'hover:bg-muted',
+                option.value === value && 'bg-primary text-primary-foreground font-semibold'
               )}
               onClick={() => handleOptionClick(option.value)}
               role="option"
               aria-selected={option.value === value}
-              data-active={option.value === value}
             >
               <div className="flex items-center gap-2">
                 {option.value === value && <Check className="h-4 w-4" />}
@@ -190,11 +220,14 @@ export const Select = ({
           ))}
         </ul>
       )}
+
       {errorMessage && (
-        <p className={cn(errorVariantClass, 'mt-1 text-xs font-medium')}>{errorMessage}</p>
+        <p className="text-destructive mt-1.5 text-xs font-medium">{errorMessage}</p>
       )}
     </div>
   )
 }
+
+Select.displayName = 'Select'
 
 export default Select
