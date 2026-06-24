@@ -24,7 +24,9 @@ export const contactFormSchema = z
     // Tipo de mensaje: comentario general vs solicitud de servicio.
     // La web pública no maneja pagos ni calendario — la admin cierra todo
     // por privado con cada clienta después del primer contacto.
-    messageType: z.enum(['GENERAL', 'SERVICE_INQUIRY']),
+    // Opcional: integraciones viejas no lo envían; el server action trata
+    // ausencia como 'GENERAL'.
+    messageType: z.enum(['GENERAL', 'SERVICE_INQUIRY']).optional(),
     // Cuando messageType == SERVICE_INQUIRY: id del servicio elegido
     // (o el sentinel 'other' para servicio custom).
     serviceId: z.string().trim().max(100).optional(),

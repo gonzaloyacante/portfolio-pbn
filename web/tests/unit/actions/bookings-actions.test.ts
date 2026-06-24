@@ -5,10 +5,15 @@ vi.mock('@/lib/db', () => ({
     booking: {
       create: vi.fn().mockResolvedValue({ id: 'bk-1' }),
       findMany: vi.fn().mockResolvedValue([]),
+      findUnique: vi.fn().mockResolvedValue({ id: 'bk-1', deletedAt: null, status: 'PENDING' }),
+      findFirst: vi.fn().mockResolvedValue({ id: 'bk-1', deletedAt: null, status: 'PENDING' }),
       update: vi.fn().mockResolvedValue({}),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+      delete: vi.fn().mockResolvedValue({}),
     },
     service: {
       findFirst: vi.fn().mockResolvedValue({ id: 'svc-1' }),
+      findUnique: vi.fn().mockResolvedValue({ id: 'svc-1' }),
     },
   },
 }))

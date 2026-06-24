@@ -121,7 +121,7 @@ function buildSanitizedData(data: ValidatedContactData) {
     message: sanitizeText(data.message),
     responsePreference: data.responsePreference,
     instagramUser: data.instagramUser ? sanitizeText(data.instagramUser) : undefined,
-    messageType: data.messageType,
+    messageType: data.messageType ?? 'GENERAL',
     serviceId: isCustomService || !data.serviceId ? null : data.serviceId,
     customService: data.customService ? sanitizeText(data.customService) : null,
   }

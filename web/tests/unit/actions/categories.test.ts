@@ -3,12 +3,26 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 // ──────────────────────────────────────────
 // Mocks
 // ──────────────────────────────────────────
-const mockDeleteCategory = vi.fn(() => Promise.resolve())
+const mockDeleteCategory = vi.fn(() => Promise.resolve({ success: true }))
 
 vi.mock('@/lib/db', () => ({
   prisma: {
     category: {
       update: vi.fn(),
+      updateMany: vi.fn(),
+      findUnique: vi.fn(),
+      findFirst: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      createMany: vi.fn(),
+      delete: vi.fn(),
+      deleteMany: vi.fn(),
+      count: vi.fn(),
+      findUniqueOrThrow: vi.fn().mockResolvedValue({}),
+      findFirstOrThrow: vi.fn().mockResolvedValue({}),
+      upsert: vi.fn().mockResolvedValue({}),
+      aggregate: vi.fn().mockResolvedValue({}),
+      groupBy: vi.fn().mockResolvedValue({}),
     },
     $transaction: vi.fn().mockImplementation(async (ops: Promise<unknown>[]) => Promise.all(ops)),
   },
@@ -95,26 +109,30 @@ describe('Category Actions', () => {
   describe('reorderCategories', () => {
     it('should reorder categories by array index', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.category.update).mockResolvedValue(
-        {} as Parameters<typeof prisma.category.update>[0]['data'] as never
-      )
+      vi.mocked(prisma.category.updateMany).mockResolvedValue({ count: 1 } as Parameters<
+        typeof prisma.category.updateMany
+      >[0] extends infer T
+        ? T extends { data: infer D }
+          ? D
+          : never
+        : never)
 
       const { reorderCategories } = await import('@/actions/cms/category')
       await reorderCategories(['cat-b', 'cat-a', 'cat-c'])
 
-      expect(prisma.category.update).toHaveBeenCalledTimes(3)
+      expect(prisma.category.updateMany).toHaveBeenCalledTimes(3)
     })
 
     it('should set sortOrder=0 for first element', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.category.update).mockResolvedValue({} as never)
+      vi.mocked(prisma.category.updateMany).mockResolvedValue({ count: 1 } as never)
 
       const { reorderCategories } = await import('@/actions/cms/category')
       await reorderCategories(['first-cat', 'second-cat'])
 
-      expect(prisma.category.update).toHaveBeenCalledWith(
+      expect(prisma.category.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: 'first-cat' },
+          where: { id: 'first-cat', deletedAt: null },
           data: { sortOrder: 0 },
         })
       )
@@ -122,14 +140,14 @@ describe('Category Actions', () => {
 
     it('should set sortOrder=1 for second element', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.category.update).mockResolvedValue({} as never)
+      vi.mocked(prisma.category.updateMany).mockResolvedValue({ count: 1 } as never)
 
       const { reorderCategories } = await import('@/actions/cms/category')
       await reorderCategories(['first-cat', 'second-cat'])
 
-      expect(prisma.category.update).toHaveBeenCalledWith(
+      expect(prisma.category.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: 'second-cat' },
+          where: { id: 'second-cat', deletedAt: null },
           data: { sortOrder: 1 },
         })
       )
@@ -138,7 +156,7 @@ describe('Category Actions', () => {
     it('should revalidate categories path after reorder', async () => {
       const { prisma } = await import('@/lib/db')
       const { revalidatePath } = await import('next/cache')
-      vi.mocked(prisma.category.update).mockResolvedValue({} as never)
+      vi.mocked(prisma.category.updateMany).mockResolvedValue({ count: 1 } as never)
 
       const { reorderCategories } = await import('@/actions/cms/category')
       await reorderCategories(['cat-1'])
@@ -153,8 +171,8 @@ describe('Category Actions', () => {
 
     it('should update each category in parallel (Promise.all)', async () => {
       const { prisma } = await import('@/lib/db')
-      const updateFn = vi.fn(() => Promise.resolve({} as never))
-      prisma.category.update = updateFn
+      const updateFn = vi.fn(() => Promise.resolve({ count: 1 } as never))
+      prisma.category.updateMany = updateFn
 
       const { reorderCategories } = await import('@/actions/cms/category')
       await reorderCategories(['a', 'b', 'c', 'd'])

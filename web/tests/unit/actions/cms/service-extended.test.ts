@@ -5,10 +5,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const mockServiceMethods = vi.hoisted(() => ({
   findMany: vi.fn(),
   findFirst: vi.fn(),
-  findUnique: vi.fn(),
+  findUnique: vi
+    .fn()
+    .mockResolvedValue({ id: 'svc-1', deletedAt: null, slug: 'test', isActive: true }),
   create: vi.fn(),
+  createMany: vi.fn(),
   update: vi.fn(),
+  updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+  upsert: vi.fn(),
   delete: vi.fn(),
+  deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
+  count: vi.fn(),
   aggregate: vi.fn().mockResolvedValue({ _max: { sortOrder: 0 } }),
 }))
 

@@ -4,7 +4,23 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/db', () => ({
   prisma: {
-    user: { findUnique: vi.fn(), update: vi.fn() },
+    user: {
+      findUnique: vi.fn(),
+      update: vi.fn(),
+      findUniqueOrThrow: vi.fn().mockResolvedValue({}),
+      findFirst: vi.fn().mockResolvedValue({}),
+      findFirstOrThrow: vi.fn().mockResolvedValue({}),
+      findMany: vi.fn().mockResolvedValue({}),
+      create: vi.fn().mockResolvedValue({}),
+      createMany: vi.fn().mockResolvedValue({ count: 1 }),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+      upsert: vi.fn().mockResolvedValue({}),
+      delete: vi.fn().mockResolvedValue({}),
+      deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
+      count: vi.fn().mockResolvedValue({}),
+      aggregate: vi.fn().mockResolvedValue({}),
+      groupBy: vi.fn().mockResolvedValue({}),
+    },
     refreshToken: { updateMany: vi.fn().mockResolvedValue({ count: 0 }) },
   },
 }))

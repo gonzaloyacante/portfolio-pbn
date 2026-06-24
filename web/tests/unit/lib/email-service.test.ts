@@ -16,6 +16,28 @@ vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }))
 
+vi.mock('@/lib/db', () => ({
+  prisma: {
+    emailSettings: {
+      findUnique: vi.fn().mockResolvedValue({
+        id: 'singleton',
+        key: 'singleton',
+        sendContactNotifications: true,
+        sendBookingNotifications: true,
+        sendTestimonialNotifications: true,
+        notificationEmails: [],
+        isActive: true,
+      }),
+      findFirst: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      updateMany: vi.fn(),
+      upsert: vi.fn(),
+    },
+  },
+}))
+
 vi.mock('@/actions/settings/contact', () => ({
   getContactSettings: vi.fn().mockResolvedValue({ email: 'admin@portfolio.com' }),
 }))

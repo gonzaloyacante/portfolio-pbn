@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 const mockPrisma = vi.hoisted(() => ({
-  siteSettings: { findFirst: vi.fn() },
+  siteSettings: { findFirst: vi.fn().mockResolvedValue({ id: '1', key: 'singleton' }) },
 }))
 
 vi.mock('@/lib/db', () => ({

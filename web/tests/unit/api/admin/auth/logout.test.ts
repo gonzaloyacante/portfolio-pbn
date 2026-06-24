@@ -5,8 +5,40 @@ import { hashToken } from '@/lib/token-hash'
 
 vi.mock('@/lib/db', () => ({
   prisma: {
-    refreshToken: { updateMany: vi.fn() },
-    pushToken: { updateMany: vi.fn() },
+    refreshToken: {
+      updateMany: vi.fn(),
+      findUnique: vi.fn().mockResolvedValue({}),
+      findUniqueOrThrow: vi.fn().mockResolvedValue({}),
+      findFirst: vi.fn().mockResolvedValue({}),
+      findFirstOrThrow: vi.fn().mockResolvedValue({}),
+      findMany: vi.fn().mockResolvedValue({}),
+      create: vi.fn().mockResolvedValue({}),
+      createMany: vi.fn().mockResolvedValue({ count: 1 }),
+      update: vi.fn().mockResolvedValue({}),
+      upsert: vi.fn().mockResolvedValue({}),
+      delete: vi.fn().mockResolvedValue({}),
+      deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
+      count: vi.fn().mockResolvedValue({}),
+      aggregate: vi.fn().mockResolvedValue({}),
+      groupBy: vi.fn().mockResolvedValue({}),
+    },
+    pushToken: {
+      updateMany: vi.fn(),
+      findUnique: vi.fn().mockResolvedValue({}),
+      findUniqueOrThrow: vi.fn().mockResolvedValue({}),
+      findFirst: vi.fn().mockResolvedValue({}),
+      findFirstOrThrow: vi.fn().mockResolvedValue({}),
+      findMany: vi.fn().mockResolvedValue({}),
+      create: vi.fn().mockResolvedValue({}),
+      createMany: vi.fn().mockResolvedValue({ count: 1 }),
+      update: vi.fn().mockResolvedValue({}),
+      upsert: vi.fn().mockResolvedValue({}),
+      delete: vi.fn().mockResolvedValue({}),
+      deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
+      count: vi.fn().mockResolvedValue({}),
+      aggregate: vi.fn().mockResolvedValue({}),
+      groupBy: vi.fn().mockResolvedValue({}),
+    },
   },
 }))
 
