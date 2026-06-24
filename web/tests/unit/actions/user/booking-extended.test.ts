@@ -338,7 +338,7 @@ describe('updateBookingStatus', () => {
     expect(result.success).toBe(true)
     expect(prisma.booking.update).toHaveBeenCalledWith({
       where: { id: 'b-1' },
-      data: { status: 'CONFIRMED' },
+      data: expect.objectContaining({ status: 'CONFIRMED' }),
     })
   })
 

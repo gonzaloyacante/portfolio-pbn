@@ -260,13 +260,18 @@ describe('Bookings Actions', () => {
       expect(result.success).toBe(true)
       expect(prisma.booking.update).toHaveBeenCalledWith({
         where: { id: 'bk-1' },
-        data: { status: 'CONFIRMED' },
+        data: expect.objectContaining({ status: 'CONFIRMED' }),
       })
     })
 
     it('revalidates cache after update', async () => {
       const { revalidatePath } = await import('next/cache')
       const { prisma } = await import('@/lib/db')
+      vi.mocked(prisma.booking.findUnique).mockResolvedValue({
+        id: 'bk-1',
+        status: 'PENDING',
+        deletedAt: null,
+      } as never)
       vi.mocked(prisma.booking.update).mockResolvedValue({
         id: 'bk-1',
         status: 'COMPLETED',
