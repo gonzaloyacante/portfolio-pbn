@@ -7,6 +7,7 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
 import { getPublicSiteUrl } from '@/lib/site-url'
+import { logger } from '@/lib/logger'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getCategorySettings } from '@/actions/settings/categories'
@@ -28,8 +29,18 @@ const getPublicCategorySlugs = unstable_cache(
 )
 
 export async function generateStaticParams() {
-  const categories = await getPublicCategorySlugs()
-  return categories.map((c) => ({ category: c.slug }))
+  try {
+    const categories = await getPublicCategorySlugs()
+    return categories.map((c) => ({ category: c.slug }))
+  } catch (error) {
+    // Neon free tier suspende el compute después de inactividad. Si la DB
+    // no responde durante el build de Vercel, NO pre-generamos páginas:
+    // se generan on-demand en el primer request (cuando la DB ya está
+    // despierta). Esto evita que el build del Preview falle después de
+    // un período sin actividad.
+    logger.warn('generateStaticParams: DB unavailable, returning empty params', { error })
+    return []
+  }
 }
 
 const getCategory = unstable_cache(
