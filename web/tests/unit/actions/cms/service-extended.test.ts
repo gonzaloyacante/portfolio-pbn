@@ -223,6 +223,13 @@ describe('updateService', () => {
 
   it('should update service successfully', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findUnique).mockResolvedValue({
+      id: 'svc-1',
+      imageUrl: null,
+      galleryUrls: [],
+      slug: 'test',
+      deletedAt: null,
+    } as never)
     vi.mocked(prisma.service.update).mockResolvedValue({} as never)
 
     const { updateService } = await import('@/actions/cms/services')
@@ -287,7 +294,12 @@ describe('toggleService', () => {
 
   it('should toggle active state from true to false', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValue({ id: 'svc-1', isActive: true } as never)
+    vi.mocked(prisma.service.findUnique).mockResolvedValue({
+      id: 'svc-1',
+      isActive: true,
+      deletedAt: null,
+      slug: 'test',
+    } as never)
     vi.mocked(prisma.service.update).mockResolvedValue({} as never)
 
     const { toggleService } = await import('@/actions/cms/services')
@@ -301,6 +313,8 @@ describe('toggleService', () => {
     vi.mocked(prisma.service.findUnique).mockResolvedValue({
       id: 'svc-1',
       isActive: false,
+      deletedAt: null,
+      slug: 'test',
     } as never)
     vi.mocked(prisma.service.update).mockResolvedValue({} as never)
 
