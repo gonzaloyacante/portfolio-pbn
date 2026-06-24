@@ -78,6 +78,7 @@ describe('updateCategoryGalleryOrder', () => {
     mockPrisma.category.findUnique.mockResolvedValue({
       id: VALID_CUID,
       slug: 'retrato',
+      deletedAt: null,
     })
 
     const result = await updateCategoryGalleryOrder(validInput)
@@ -120,7 +121,11 @@ describe('updateCategoryGalleryOrder', () => {
   })
 
   it('executes a transaction to update image orders', async () => {
-    mockPrisma.category.findUnique.mockResolvedValue({ id: VALID_CUID, slug: 'test' })
+    mockPrisma.category.findUnique.mockResolvedValue({
+      id: VALID_CUID,
+      slug: 'test',
+      deletedAt: null,
+    })
 
     await updateCategoryGalleryOrder(validInput)
 
@@ -135,6 +140,11 @@ describe('resetCategoryGalleryOrder', () => {
 
   it('returns error when category has no images', async () => {
     mockPrisma.categoryImage.findMany.mockResolvedValue([])
+    mockPrisma.category.findUnique.mockResolvedValue({
+      id: VALID_CUID,
+      slug: 'retrato',
+      deletedAt: null,
+    })
 
     const result = await resetCategoryGalleryOrder(VALID_CUID)
     expect(result.success).toBe(false)
@@ -144,7 +154,11 @@ describe('resetCategoryGalleryOrder', () => {
   it('resets orders and returns success when images exist', async () => {
     mockPrisma.categoryImage.findMany.mockResolvedValue([{ id: 'img-1' }, { id: 'img-2' }])
     mockPrisma.$transaction.mockResolvedValue([])
-    mockPrisma.category.findUnique.mockResolvedValue({ id: VALID_CUID, slug: 'retrato' })
+    mockPrisma.category.findUnique.mockResolvedValue({
+      id: VALID_CUID,
+      slug: 'retrato',
+      deletedAt: null,
+    })
 
     const result = await resetCategoryGalleryOrder(VALID_CUID)
     expect(result.success).toBe(true)
