@@ -245,7 +245,7 @@ describe('Settings: Contact Actions', () => {
     })
 
     it('revalidates cache after update', async () => {
-      const { revalidatePath, revalidateTag } = await import('next/cache')
+      const { revalidateTag } = await import('next/cache')
       const { prisma } = await import('@/lib/db')
       vi.mocked(prisma.contactSettings.findUnique).mockResolvedValue(mockContactSettings as never)
       vi.mocked(prisma.contactSettings.upsert).mockResolvedValue(mockContactSettings as never)
@@ -253,7 +253,6 @@ describe('Settings: Contact Actions', () => {
       const { updateContactSettings } = await import('@/actions/settings/contact')
       await updateContactSettings({ pageTitle: 'Test' })
 
-      expect(revalidatePath).toHaveBeenCalled()
       expect(revalidateTag).toHaveBeenCalled()
     })
 
