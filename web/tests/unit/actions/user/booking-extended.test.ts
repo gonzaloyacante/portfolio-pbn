@@ -7,12 +7,22 @@ vi.mock('@/lib/db', () => ({
     booking: {
       create: vi.fn(),
       findMany: vi.fn(),
-      findUnique: vi.fn(),
+      findUnique: vi
+        .fn()
+        .mockResolvedValue({
+          id: 'b-1',
+          deletedAt: null,
+          status: 'PENDING',
+          date: null,
+          serviceId: 'svc-1',
+          clientName: 'Test',
+          clientEmail: 'test@test.com',
+        }),
       update: vi.fn(),
       delete: vi.fn(),
       count: vi.fn(),
       findUniqueOrThrow: vi.fn().mockResolvedValue({}),
-      findFirst: vi.fn().mockResolvedValue({}),
+      findFirst: vi.fn().mockResolvedValue({ id: 'b-1', deletedAt: null, status: 'PENDING' }),
       findFirstOrThrow: vi.fn().mockResolvedValue({}),
       createMany: vi.fn().mockResolvedValue({ count: 1 }),
       updateMany: vi.fn().mockResolvedValue({ count: 1 }),
@@ -22,8 +32,8 @@ vi.mock('@/lib/db', () => ({
       groupBy: vi.fn().mockResolvedValue({}),
     },
     service: {
-      findFirst: vi.fn(),
-      findUnique: vi.fn().mockResolvedValue({}),
+      findFirst: vi.fn().mockResolvedValue({ id: 'svc-1' }),
+      findUnique: vi.fn().mockResolvedValue({ id: 'svc-1', deletedAt: null }),
       findUniqueOrThrow: vi.fn().mockResolvedValue({}),
       findFirstOrThrow: vi.fn().mockResolvedValue({}),
       findMany: vi.fn().mockResolvedValue({}),
