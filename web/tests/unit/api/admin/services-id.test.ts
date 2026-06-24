@@ -190,11 +190,17 @@ describe('PATCH /api/admin/services/[id]', () => {
 
   it('updates service successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    const mockUpdated = { ...mockServiceFull, name: 'Updated Service', imageUrl: null }
+    const mockUpdated = {
+      ...mockServiceFull,
+      name: 'Updated Service',
+      imageUrl: null,
+      deletedAt: null,
+    }
     vi.mocked(prisma.service.findUnique).mockResolvedValue(mockUpdated as any)
     vi.mocked(prisma.service.update).mockResolvedValueOnce({
       ...mockServiceFull,
       name: 'Updated Service',
+      deletedAt: null,
     } as any)
 
     const { PATCH } = await import('@/app/api/admin/services/[id]/route')
@@ -271,7 +277,7 @@ describe('PATCH /api/admin/services/[id]', () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.service.findUnique)
       .mockResolvedValueOnce(null as any)
-      .mockResolvedValueOnce({ imageUrl: null } as any)
+      .mockResolvedValueOnce({ imageUrl: null, deletedAt: null } as any)
       .mockResolvedValueOnce(mockServiceFull as any)
     vi.mocked(prisma.service.update).mockResolvedValueOnce(mockServiceFull as any)
     vi.mocked(prisma.servicePricingTier.deleteMany).mockResolvedValueOnce({ count: 2 } as any)

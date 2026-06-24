@@ -282,12 +282,12 @@ describe('deleteContact', () => {
 
   it('should delete contact by id', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.update).mockResolvedValue({} as never)
+    vi.mocked(prisma.contact.updateMany).mockResolvedValue({ count: 1 } as never)
 
     const { deleteContact } = await import('@/actions/user/contact')
     await deleteContact('c-1')
-    expect(prisma.contact.update).toHaveBeenCalledWith({
-      where: { id: 'c-1' },
+    expect(prisma.contact.updateMany).toHaveBeenCalledWith({
+      where: { id: 'c-1', deletedAt: null },
       data: { deletedAt: expect.any(Date) },
     })
   })

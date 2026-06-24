@@ -70,6 +70,7 @@ describe('Auth Actions', () => {
   describe('requestPasswordReset', () => {
     it('should return ambiguous success when user does not exist', async () => {
       const { prisma } = await import('@/lib/db')
+      vi.mocked(prisma.user.findFirst).mockResolvedValue(null)
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
       const result = await requestPasswordReset('nonexistent@example.com', 'test-token')
