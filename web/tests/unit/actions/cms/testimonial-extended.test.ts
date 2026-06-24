@@ -6,12 +6,23 @@ vi.mock('@/lib/db', () => ({
   prisma: {
     testimonial: {
       findMany: vi.fn(),
-      findUnique: vi.fn(),
+      findUnique: vi
+        .fn()
+        .mockResolvedValue({
+          id: 't-1',
+          deletedAt: null,
+          isActive: true,
+          isFeatured: false,
+          sortOrder: 0,
+          isVerified: true,
+        }),
       create: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
       findUniqueOrThrow: vi.fn().mockResolvedValue({}),
-      findFirst: vi.fn().mockResolvedValue({}),
+      findFirst: vi
+        .fn()
+        .mockResolvedValue({ id: 't-1', deletedAt: null, isActive: true, isVerified: true }),
       findFirstOrThrow: vi.fn().mockResolvedValue({}),
       createMany: vi.fn().mockResolvedValue({ count: 1 }),
       updateMany: vi.fn().mockResolvedValue({ count: 1 }),

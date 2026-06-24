@@ -9,8 +9,17 @@ const mockServiceMethods = vi.hoisted(() => ({
   update: vi.fn(),
   delete: vi.fn(),
   findMany: vi.fn(),
-  findUnique: vi.fn(),
-  findFirst: vi.fn(),
+  findUnique: vi
+    .fn()
+    .mockResolvedValue({ id: 'svc-1', deletedAt: null, isActive: true, slug: 'test' }),
+  findFirst: vi
+    .fn()
+    .mockResolvedValue({ id: 'svc-1', deletedAt: null, isActive: true, slug: 'test' }),
+  updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+  createMany: vi.fn(),
+  deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
+  upsert: vi.fn(),
+  count: vi.fn(),
   aggregate: vi.fn().mockResolvedValue({ _max: { sortOrder: 0 } }),
 }))
 
@@ -366,11 +375,11 @@ describe('Service Actions', () => {
 
     it('should call prisma update for each service', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.service.update).mockResolvedValue(makeService())
+      vi.mocked(prisma.service.updateMany).mockResolvedValue({ count: 1 } as never)
 
       const { reorderServices } = await import('@/actions/cms/services')
       await reorderServices(['s1', 's2', 's3'])
-      expect(prisma.service.update).toHaveBeenCalledTimes(3)
+      expect(prisma.service.updateMany).toHaveBeenCalledTimes(3)
     })
 
     it('should handle empty array gracefully', async () => {
@@ -381,14 +390,14 @@ describe('Service Actions', () => {
 
     it('should set sortOrder based on array position', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.service.update).mockResolvedValue(makeService())
+      vi.mocked(prisma.service.updateMany).mockResolvedValue({ count: 1 } as never)
 
       const { reorderServices } = await import('@/actions/cms/services')
       await reorderServices(['first-id', 'second-id'])
 
-      expect(prisma.service.update).toHaveBeenCalledWith(
+      expect(prisma.service.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { id: 'first-id' },
+          where: { id: 'first-id', deletedAt: null },
           data: expect.objectContaining({ sortOrder: 0 }),
         })
       )

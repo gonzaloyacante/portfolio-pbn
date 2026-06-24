@@ -7,12 +7,16 @@ vi.mock('@/lib/db', () => ({
     contact: {
       create: vi.fn(),
       findMany: vi.fn(),
-      findUnique: vi.fn(),
+      findUnique: vi
+        .fn()
+        .mockResolvedValue({ id: 'c-1', deletedAt: null, isRead: false, isResponded: false }),
       update: vi.fn(),
       delete: vi.fn(),
       count: vi.fn(),
       findUniqueOrThrow: vi.fn().mockResolvedValue({}),
-      findFirst: vi.fn().mockResolvedValue({}),
+      findFirst: vi
+        .fn()
+        .mockResolvedValue({ id: 'c-1', deletedAt: null, isRead: false, isResponded: false }),
       findFirstOrThrow: vi.fn().mockResolvedValue({}),
       createMany: vi.fn().mockResolvedValue({ count: 1 }),
       updateMany: vi.fn().mockResolvedValue({ count: 1 }),

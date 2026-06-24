@@ -9,7 +9,7 @@ vi.mock('@/lib/db', () => ({
       update: vi.fn(),
       delete: vi.fn(),
       findMany: vi.fn(),
-      findUnique: vi.fn(),
+      findUnique: vi.fn().mockResolvedValue({ id: 't-1', deletedAt: null, isActive: true }),
       count: vi.fn(),
       findUniqueOrThrow: vi.fn().mockResolvedValue({}),
       findFirst: vi.fn().mockResolvedValue({}),
