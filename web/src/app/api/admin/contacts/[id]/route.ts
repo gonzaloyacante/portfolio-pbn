@@ -68,7 +68,7 @@ export async function GET(req: Request, { params }: Params) {
         where: { id },
         data: { isRead: true, readAt: now },
       })
-      revalidatePath(ROUTES.admin.contacts)
+      revalidatePath(ROUTES.admin.messages)
       revalidateTag(CACHE_TAGS.contacts, 'max')
       return NextResponse.json({
         success: true,
@@ -126,7 +126,7 @@ export async function PATCH(req: Request, { params }: Params) {
       select: CONTACT_DETAIL_SELECT,
     })
 
-    revalidatePath(ROUTES.admin.contacts)
+    revalidatePath(ROUTES.admin.messages)
     revalidateTag(CACHE_TAGS.contacts, 'max')
 
     return NextResponse.json({ success: true, data: updated })
@@ -157,7 +157,7 @@ export async function DELETE(req: Request, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Contacto no encontrado' }, { status: 404 })
     }
 
-    revalidatePath(ROUTES.admin.contacts)
+    revalidatePath(ROUTES.admin.messages)
     revalidateTag(CACHE_TAGS.contacts, 'max')
 
     return NextResponse.json({ success: true, message: 'Contacto eliminado' })

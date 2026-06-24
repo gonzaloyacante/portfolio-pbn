@@ -116,27 +116,53 @@ export function HeroContent({
     colorDarkHex: s.heroScrimColorDark ?? null,
     prefersDark: false,
   }
-  const mobileExtent = s.heroScrimMobileExtentPercent ?? baseScrimParams.extentPercent
-  const mobileOpacity = s.heroScrimMobileOpacity ?? baseScrimParams.opacityPercent
+
+  // 3 sets de params independientes (escritorio / tablet / móvil) — sin
+  // herencia entre viewports. Si el campo del viewport activo está vacío,
+  // se usa el default específico de ese viewport.
+  const tabletParams = {
+    ...baseScrimParams,
+    extentPercent: s.heroScrimTabletExtentPercent ?? baseScrimParams.extentPercent,
+    opacityPercent: s.heroScrimTabletOpacity ?? baseScrimParams.opacityPercent,
+  }
   const mobileParams = {
     ...baseScrimParams,
-    extentPercent: mobileExtent,
-    opacityPercent: mobileOpacity,
+    extentPercent: s.heroScrimMobileExtentPercent ?? baseScrimParams.extentPercent,
+    opacityPercent: s.heroScrimMobileOpacity ?? baseScrimParams.opacityPercent,
   }
+  const paramsByViewport = {
+    desktop: baseScrimParams,
+    tablet: tabletParams,
+    mobile: mobileParams,
+  } as const
 
-  const scrims = isMobile
-    ? ([
-        (s.heroScrimMobileShowLeft ?? false) &&
-          buildHeroScrimBackground({ ...mobileParams, edge: 'left' }),
-        (s.heroScrimMobileShowRight ?? false) &&
-          buildHeroScrimBackground({ ...mobileParams, edge: 'right' }),
-      ].filter(Boolean) as string[])
-    : ([
-        (s.heroScrimShowLeft ?? true) &&
-          buildHeroScrimBackground({ ...baseScrimParams, edge: 'left' }),
-        (s.heroScrimShowRight ?? false) &&
-          buildHeroScrimBackground({ ...baseScrimParams, edge: 'right' }),
-      ].filter(Boolean) as string[])
+  // `show` por sombra × viewport: cada uno tiene su propio boolean,
+  // y la sombra "top" del hero se renderiza finalmente (arregla el bug
+  // zombie donde heroScrimShowTop existía en schema pero no se pintaba).
+  const showLeftByViewport = {
+    desktop: s.heroScrimShowLeft ?? true,
+    tablet: s.heroScrimTabletShowLeft ?? true,
+    mobile: s.heroScrimMobileShowLeft ?? false,
+  } as const
+  const showRightByViewport = {
+    desktop: s.heroScrimShowRight ?? false,
+    tablet: s.heroScrimTabletShowRight ?? false,
+    mobile: s.heroScrimMobileShowRight ?? false,
+  } as const
+  const showTopByViewport = {
+    desktop: s.heroScrimShowTop ?? true,
+    tablet: s.heroScrimTabletShowTop ?? true,
+    mobile: s.heroScrimMobileShowTop ?? true,
+  } as const
+
+  const activeParams = paramsByViewport[viewportMode]
+  const scrimCandidates = [
+    showLeftByViewport[viewportMode] && buildHeroScrimBackground({ ...activeParams, edge: 'left' }),
+    showRightByViewport[viewportMode] &&
+      buildHeroScrimBackground({ ...activeParams, edge: 'right' }),
+    showTopByViewport[viewportMode] && buildHeroScrimBackground({ ...activeParams, edge: 'top' }),
+  ]
+  const scrims = scrimCandidates.filter((bg): bg is string => Boolean(bg))
 
   const tint = buildHeroBackdropTint(s.heroBackdropTintOpacity ?? 0)
 

@@ -82,6 +82,22 @@ export const homeSettingsSchema = z.object({
   heroScrimMobileShowTop: z.boolean().optional(),
   heroScrimMobileExtentPercent: z.number().int().min(5).max(100).optional().nullable(),
   heroScrimMobileOpacity: z.number().int().min(0).max(100).optional().nullable(),
+  heroScrimTabletShowLeft: z.boolean().optional(),
+  heroScrimTabletShowRight: z.boolean().optional(),
+  heroScrimTabletShowTop: z.boolean().optional(),
+  heroScrimTabletExtentPercent: z.number().int().min(5).max(100).optional().nullable(),
+  heroScrimTabletOpacity: z.number().int().min(0).max(100).optional().nullable(),
+
+  // Scrim del navbar (top) — escritorio, móvil y tablet
+  navbarScrimEnabled: z.boolean().optional(),
+  navbarScrimIntensity: z.number().int().min(0).max(100).optional(),
+  navbarScrimHeightVh: z.number().int().min(5).max(100).optional(),
+  navbarScrimMobileEnabled: z.boolean().optional(),
+  navbarScrimMobileIntensity: z.number().int().min(0).max(100).optional(),
+  navbarScrimMobileHeightVh: z.number().int().min(5).max(100).optional(),
+  navbarScrimTabletEnabled: z.boolean().optional(),
+  navbarScrimTabletIntensity: z.number().int().min(0).max(100).optional(),
+  navbarScrimTabletHeightVh: z.number().int().min(5).max(100).optional(),
 
   illustrationUrl: z.string().optional().nullable(),
   illustrationAlt: z.string().optional().nullable(),

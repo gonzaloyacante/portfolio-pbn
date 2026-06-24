@@ -86,7 +86,7 @@
     --success: #10b981; /* Emerald-500 */
     --success-foreground: #ffffff;
 
-    --warning: #f59e0b; /* Amber-500 */
+    --warning: #b45309; /* Amber-700 (era Amber-500, ilegible como texto) */
     --warning-foreground: #ffffff;
 
     --info: #3b82f6; /* Blue-500 */
@@ -235,4 +235,67 @@
 /* react-international-phone: z-index for dropdown */
 .react-international-phone-country-selector-dropdown {
   z-index: 50;
+}
+
+/* ============================================
+   NAVBAR SCRIM (top) — 3 viewports independientes
+   Las 9 CSS vars (3 valores × 3 atributos) se setean
+   inline en Navbar.tsx. CSS elige cuál usar según
+   el viewport actual del cliente. El `enabled` por
+   viewport se controla con data attrs (display:none
+   en el viewport desactivado).
+   ============================================ */
+.pbn-navbar-scrim {
+  /* Por defecto: mobile */
+  --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-mobile, 45vh);
+  --pbn-navbar-scrim-i: var(--pbn-navbar-scrim-i-mobile, 80%);
+  height: var(--pbn-navbar-scrim-h);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--foreground) var(--pbn-navbar-scrim-i), transparent) 0%,
+    color-mix(in srgb, var(--foreground) calc(var(--pbn-navbar-scrim-i) * 0.4), transparent) 41.67%,
+    transparent 100%
+  );
+}
+
+/* Tablet: 768px – 1023.98px */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .pbn-navbar-scrim {
+    --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-tablet, 45vh);
+    --pbn-navbar-scrim-i: var(--pbn-navbar-scrim-i-tablet, 80%);
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .pbn-navbar-scrim {
+    --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-desktop, 45vh);
+    --pbn-navbar-scrim-i: var(--pbn-navbar-scrim-i-desktop, 80%);
+  }
+}
+
+/* `enabled` por viewport: si el data attr es "true" en el viewport actual, ocultar */
+.pbn-navbar-scrim[data-disabled-mobile='true'] {
+  display: none;
+}
+.pbn-navbar-scrim[data-disabled-tablet='true'] {
+  display: none;
+}
+.pbn-navbar-scrim[data-disabled-desktop='true'] {
+  display: none;
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  /* En tablet, el flag mobile NO aplica (somos tablet, no mobile) */
+  .pbn-navbar-scrim[data-disabled-mobile='true'] {
+    display: revert;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* En desktop, los flags mobile y tablet NO aplican */
+  .pbn-navbar-scrim[data-disabled-mobile='true'],
+  .pbn-navbar-scrim[data-disabled-tablet='true'] {
+    display: revert;
+  }
 }

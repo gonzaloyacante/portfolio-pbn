@@ -28,20 +28,37 @@ interface HomePreviewNavbarProps {
  * responden al viewport del browser (que en admin siempre es lg+), por eso
  * aquí usamos tamaños grandes fijos. El scale externo reduce proporcionalmente
  * para desktop/tablet/mobile — más legible que clases responsive por viewport.
+ *
+ * El scrim superior usa la misma clase `.pbn-navbar-scrim` que el Navbar público
+ * con CSS media queries, así refleja exactamente los 3 sets de valores que la
+ * administradora edita en el CMS.
  */
-export function HomePreviewNavbar({ settings: _settings }: HomePreviewNavbarProps) {
+export function HomePreviewNavbar({ settings }: HomePreviewNavbarProps) {
+  const s = settings ?? ({} as Partial<HomeSettingsData>)
+  const heightDesktop = s.navbarScrimHeightVh ?? 45
+  const intensityDesktop = s.navbarScrimIntensity ?? 80
+  const heightTablet = s.navbarScrimTabletHeightVh ?? 45
+  const intensityTablet = s.navbarScrimTabletIntensity ?? 80
+  const heightMobile = s.navbarScrimMobileHeightVh ?? 45
+  const intensityMobile = s.navbarScrimMobileIntensity ?? 80
   return (
     <>
-      {/* Scrim superior — replica el gradiente del navbar público home */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-40 h-[45vh]"
+        className="pbn-navbar-scrim pointer-events-none absolute inset-x-0 top-0 z-40"
+        data-disabled-mobile={s.navbarScrimMobileEnabled === false}
+        data-disabled-tablet={s.navbarScrimTabletEnabled === false}
+        data-disabled-desktop={s.navbarScrimEnabled === false}
         style={{
-          background: `linear-gradient(180deg, color-mix(in srgb, var(--foreground) 85%, transparent) 0%, color-mix(in srgb, var(--foreground) 35%, transparent) 41.67%, transparent 100%)`,
+          ['--pbn-navbar-scrim-h-mobile' as string]: `${heightMobile}vh`,
+          ['--pbn-navbar-scrim-i-mobile' as string]: `${intensityMobile}%`,
+          ['--pbn-navbar-scrim-h-tablet' as string]: `${heightTablet}vh`,
+          ['--pbn-navbar-scrim-i-tablet' as string]: `${intensityTablet}%`,
+          ['--pbn-navbar-scrim-h-desktop' as string]: `${heightDesktop}vh`,
+          ['--pbn-navbar-scrim-i-desktop' as string]: `${intensityDesktop}%`,
         }}
       />
 
-      {/* Navbar — variante home: sin brand, sin hamburger */}
       <nav
         aria-label="Navbar (vista previa)"
         className="pointer-events-none absolute inset-x-0 top-4 z-50 w-full"

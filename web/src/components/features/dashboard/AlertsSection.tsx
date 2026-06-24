@@ -20,7 +20,7 @@ export default function AlertsSection({
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {contactsCount > 0 && (
           <Link
-            href={ROUTES.admin.contacts}
+            href={ROUTES.admin.messages}
             className="group bg-card flex cursor-pointer items-center gap-3 rounded-2xl border border-yellow-400/50 p-4 transition-all duration-200 hover:scale-[1.02] hover:border-yellow-400 hover:shadow-md active:scale-[0.98]"
           >
             <span className="text-3xl transition-transform group-hover:scale-110">📬</span>

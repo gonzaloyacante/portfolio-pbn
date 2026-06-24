@@ -206,15 +206,15 @@ const nextConfig: NextConfig = {
       { source: '/admin/testimonios/:id/editar', destination: '/admin/testimonials/:id/edit' },
 
       // Contactos (Mensajes)
+      { source: '/admin/mensajes', destination: '/admin/messages' },
       { source: '/admin/contactos', destination: '/admin/contacts' },
-      { source: '/admin/contactos/configuracion', destination: '/admin/settings' },
 
       // Sobre Mí
       { source: '/admin/sobre-mi', destination: '/admin/about' },
 
       // Configuración General (Settings)
       { source: '/admin/configuracion', destination: '/admin/settings' },
-      { source: '/admin/configuracion/sitio', destination: '/admin/settings/site' },
+      { source: '/admin/sitio', destination: '/admin/site' },
 
       // Tema
       { source: '/admin/tema', destination: '/admin/theme' },
@@ -238,6 +238,7 @@ const nextConfig: NextConfig = {
 
       // Calendario (reservas)
       { source: '/admin/calendario', destination: '/admin/calendar' },
+      { source: '/admin/calendario/:id/editar', destination: '/admin/calendar/:id/edit' },
     ]
   },
 }

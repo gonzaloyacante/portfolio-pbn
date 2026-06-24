@@ -9,8 +9,8 @@ export const ROUTES = {
   admin: {
     dashboard: '/admin/panel',
     home: '/admin/inicio',
+    messages: '/admin/mensajes',
     contacts: '/admin/contactos',
-    contactSettings: '/admin/contactos/configuracion',
     categories: '/admin/categorias',
     newCategory: '/admin/categorias/nueva',
     editCategory: (id: string) => `/admin/categorias/${id}/editar` as const,
@@ -21,7 +21,7 @@ export const ROUTES = {
     editTestimonial: (id: string) => `/admin/testimonios/${id}/editar` as const,
     about: '/admin/sobre-mi',
     settings: '/admin/configuracion',
-    siteSettings: '/admin/configuracion/sitio',
+    siteSettings: '/admin/sitio',
     theme: '/admin/tema',
     analytics: '/admin/analitica',
     calendar: '/admin/calendario',

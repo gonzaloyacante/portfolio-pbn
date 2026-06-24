@@ -89,6 +89,22 @@ export interface HomeSettingsData {
   heroScrimMobileShowTop: boolean
   heroScrimMobileExtentPercent: number | null
   heroScrimMobileOpacity: number | null
+  heroScrimTabletShowLeft: boolean
+  heroScrimTabletShowRight: boolean
+  heroScrimTabletShowTop: boolean
+  heroScrimTabletExtentPercent: number | null
+  heroScrimTabletOpacity: number | null
+
+  // Scrim del navbar (top) — escritorio, móvil y tablet
+  navbarScrimEnabled: boolean
+  navbarScrimIntensity: number | null
+  navbarScrimHeightVh: number | null
+  navbarScrimMobileEnabled: boolean
+  navbarScrimMobileIntensity: number | null
+  navbarScrimMobileHeightVh: number | null
+  navbarScrimTabletEnabled: boolean
+  navbarScrimTabletIntensity: number | null
+  navbarScrimTabletHeightVh: number | null
 
   illustrationUrl: string | null
   illustrationAlt: string | null

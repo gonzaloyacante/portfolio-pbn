@@ -7,7 +7,7 @@ import {
   MessageSquare,
   Mail,
   User,
-  Settings,
+  Share2,
   Palette,
   Globe,
   Trash2,
@@ -47,7 +47,7 @@ export const menuItems: SidebarItem[] = [
     icon: MessageSquare,
   },
   {
-    href: ROUTES.admin.contacts,
+    href: ROUTES.admin.messages,
     label: 'Mensajes',
     icon: Mail,
   },
@@ -57,13 +57,13 @@ export const menuItems: SidebarItem[] = [
     icon: User,
   },
   {
-    href: ROUTES.admin.settings,
+    href: ROUTES.admin.contacts,
     label: 'Contacto y Redes',
-    icon: Settings,
+    icon: Share2,
   },
   {
     href: ROUTES.admin.siteSettings,
-    label: 'Configuración del Sitio',
+    label: 'Sitio publico',
     icon: Globe,
   },
   {

@@ -25,6 +25,16 @@ interface NavbarProps {
   visibility?: PageVisibility | null
   brandLogoUrl?: string | null
   brandLogoAlt?: string | null
+  /** Sombra de arriba (top) — un set de 3 valores por viewport. */
+  navbarScrimEnabled?: boolean
+  navbarScrimIntensity?: number
+  navbarScrimHeightVh?: number
+  navbarScrimMobileEnabled?: boolean
+  navbarScrimMobileIntensity?: number
+  navbarScrimMobileHeightVh?: number
+  navbarScrimTabletEnabled?: boolean
+  navbarScrimTabletIntensity?: number
+  navbarScrimTabletHeightVh?: number
 }
 
 function NavbarBrand({
@@ -70,7 +80,21 @@ function NavbarBrand({
   )
 }
 
-export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoAlt }: NavbarProps) {
+export default function Navbar({
+  brandName,
+  visibility,
+  brandLogoUrl,
+  brandLogoAlt,
+  navbarScrimEnabled = true,
+  navbarScrimIntensity = 80,
+  navbarScrimHeightVh = 45,
+  navbarScrimMobileEnabled = true,
+  navbarScrimMobileIntensity = 80,
+  navbarScrimMobileHeightVh = 45,
+  navbarScrimTabletEnabled = true,
+  navbarScrimTabletIntensity = 80,
+  navbarScrimTabletHeightVh = 45,
+}: NavbarProps) {
   const pathname = usePathname()
   const isHome = pathname === ROUTES.home
   const displayBrand = visibility?.navbarBrandText ?? brandName ?? 'PBN'
@@ -127,12 +151,22 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
 
   return (
     <>
-      {isHome && (
+      {isHome && (navbarScrimEnabled || navbarScrimMobileEnabled || navbarScrimTabletEnabled) && (
         <motion.div
           aria-hidden
-          className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[45vh]"
+          className="pbn-navbar-scrim pointer-events-none fixed inset-x-0 top-0 z-40"
+          data-disabled-mobile={navbarScrimMobileEnabled === false}
+          data-disabled-tablet={navbarScrimTabletEnabled === false}
+          data-disabled-desktop={navbarScrimEnabled === false}
           style={{
-            background: `linear-gradient(180deg, color-mix(in srgb, var(--foreground) 85%, transparent) 0%, color-mix(in srgb, var(--foreground) 35%, transparent) 41.67%, transparent 100%)`,
+            // Las 9 CSS vars (3 valores × 3 atributos) — el CSS elige cuál usar.
+            // Fallback a defaults específicos por viewport en globals.css.
+            ['--pbn-navbar-scrim-h-mobile' as string]: `${navbarScrimMobileHeightVh}vh`,
+            ['--pbn-navbar-scrim-i-mobile' as string]: `${navbarScrimMobileIntensity}%`,
+            ['--pbn-navbar-scrim-h-tablet' as string]: `${navbarScrimTabletHeightVh}vh`,
+            ['--pbn-navbar-scrim-i-tablet' as string]: `${navbarScrimTabletIntensity}%`,
+            ['--pbn-navbar-scrim-h-desktop' as string]: `${navbarScrimHeightVh}vh`,
+            ['--pbn-navbar-scrim-i-desktop' as string]: `${navbarScrimIntensity}%`,
             opacity: scrimOpacity,
           }}
         />

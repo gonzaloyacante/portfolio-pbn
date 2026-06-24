@@ -88,6 +88,28 @@ model HomeSettings {
   heroScrimMobileShowTop   Boolean @default(true)
   heroScrimMobileExtentPercent Int?
   heroScrimMobileOpacity        Int?
+  /// Sombras independientes en tablet
+  heroScrimTabletShowLeft      Boolean @default(true)
+  heroScrimTabletShowRight     Boolean @default(false)
+  heroScrimTabletShowTop       Boolean @default(true)
+  heroScrimTabletExtentPercent Int?    @default(45)
+  heroScrimTabletOpacity       Int?    @default(80)
+
+  // ===== SCRIM DEL NAVBAR (top) =====
+  /// Mostrar la sombra superior fija del navbar sobre el hero
+  navbarScrimEnabled   Boolean @default(true)
+  /// Intensidad del tope del degradado (0-100). El stop medio se calcula como intensity * 0.4
+  navbarScrimIntensity Int     @default(80)
+  /// Altura del scrim en vh (5-100)
+  navbarScrimHeightVh  Int     @default(45)
+  /// Scrim del navbar en móvil
+  navbarScrimMobileEnabled   Boolean @default(true)
+  navbarScrimMobileIntensity Int?     @default(80)
+  navbarScrimMobileHeightVh  Int?     @default(45)
+  /// Scrim del navbar en tablet
+  navbarScrimTabletEnabled   Boolean @default(true)
+  navbarScrimTabletIntensity Int?     @default(80)
+  navbarScrimTabletHeightVh  Int?     @default(45)
 
   // ===== ILUSTRACIÓN =====
   illustrationUrl      String?
