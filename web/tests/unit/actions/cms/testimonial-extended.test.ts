@@ -346,6 +346,7 @@ describe('toggleTestimonial', () => {
     vi.mocked(prisma.testimonial.findUnique).mockResolvedValue({
       id: 'tst-1',
       isActive: false,
+      deletedAt: null,
     } as never)
     vi.mocked(prisma.testimonial.update).mockResolvedValue({} as never)
 

@@ -70,6 +70,8 @@ const mockUser = {
   id: 'user-1',
   email: 'admin@test.com',
   password: '$2b$12$currenthash',
+  isActive: true,
+  deletedAt: null,
 }
 
 function buildRequest(body: unknown): NextRequest {
@@ -147,7 +149,7 @@ describe('POST /api/auth/change-password', () => {
     vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
     const { POST } = await import('@/app/api/auth/change-password/route')
-    const res = await POST(buildRequest({ currentPassword: 'a', newPassword: 'newpassword123' }))
+    const res = await POST(buildRequest({ currentPassword: 'a', newPassword: 'NewPassword1' }))
     const body = await res.json()
 
     expect(res.status).toBe(404)
@@ -161,9 +163,7 @@ describe('POST /api/auth/change-password', () => {
     vi.mocked(bcrypt.compare).mockResolvedValue(false as never)
 
     const { POST } = await import('@/app/api/auth/change-password/route')
-    const res = await POST(
-      buildRequest({ currentPassword: 'wrong', newPassword: 'newpassword123' })
-    )
+    const res = await POST(buildRequest({ currentPassword: 'wrong', newPassword: 'NewPassword1' }))
     const body = await res.json()
 
     expect(res.status).toBe(400)
@@ -180,7 +180,7 @@ describe('POST /api/auth/change-password', () => {
 
     const { POST } = await import('@/app/api/auth/change-password/route')
     const res = await POST(
-      buildRequest({ currentPassword: 'correct', newPassword: 'newpassword123' })
+      buildRequest({ currentPassword: 'correct', newPassword: 'NewPassword1' })
     )
     const body = await res.json()
 
@@ -188,7 +188,7 @@ describe('POST /api/auth/change-password', () => {
     expect(body).toEqual({ success: true })
     expect(prisma.user.update).toHaveBeenCalledWith({
       where: { id: mockUser.id },
-      data: { password: '$2b$12$newhash' },
+      data: { password: '$2b$12$newhash', failedLoginCount: 0, lockedUntil: null },
     })
     expect(prisma.refreshToken.updateMany).toHaveBeenCalledWith({
       where: { userId: mockUser.id, revokedAt: null },

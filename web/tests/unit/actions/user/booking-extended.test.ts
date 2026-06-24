@@ -7,17 +7,15 @@ vi.mock('@/lib/db', () => ({
     booking: {
       create: vi.fn(),
       findMany: vi.fn(),
-      findUnique: vi
-        .fn()
-        .mockResolvedValue({
-          id: 'b-1',
-          deletedAt: null,
-          status: 'PENDING',
-          date: null,
-          serviceId: 'svc-1',
-          clientName: 'Test',
-          clientEmail: 'test@test.com',
-        }),
+      findUnique: vi.fn().mockResolvedValue({
+        id: 'b-1',
+        deletedAt: null,
+        status: 'PENDING',
+        date: null,
+        serviceId: 'svc-1',
+        clientName: 'Test',
+        clientEmail: 'test@test.com',
+      }),
       update: vi.fn(),
       delete: vi.fn(),
       count: vi.fn(),
@@ -328,7 +326,12 @@ describe('updateBookingStatus', () => {
 
   it('should update booking status to CONFIRMED', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.update).mockResolvedValue({} as never)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValue({
+      id: 'b-1',
+      status: 'PENDING',
+      deletedAt: null,
+    } as never)
+    vi.mocked(prisma.booking.update).mockResolvedValue({ id: 'b-1', status: 'CONFIRMED' } as never)
 
     const { updateBookingStatus } = await import('@/actions/user/bookings')
     const result = await updateBookingStatus('b-1', 'CONFIRMED')
