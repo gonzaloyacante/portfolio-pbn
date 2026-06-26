@@ -40,8 +40,10 @@ export function ContactDetail({
               {contact.email}
             </a>
             <button
+              type="button"
               onClick={() => onCopy(contact.email, 'email')}
               title="Copiar email"
+              aria-label="Copiar email"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {copiedField === 'email' ? (
@@ -60,8 +62,10 @@ export function ContactDetail({
                 {contact.phone}
               </a>
               <button
+                type="button"
                 onClick={() => onCopy(contact.phone!, 'phone')}
                 title="Copiar teléfono"
+                aria-label="Copiar teléfono"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {copiedField === 'phone' ? (
@@ -84,8 +88,10 @@ export function ContactDetail({
                 @{contact.instagramUser}
               </a>
               <button
+                type="button"
                 onClick={() => onCopy(`@${contact.instagramUser!}`, 'instagram')}
                 title="Copiar usuario"
+                aria-label="Copiar usuario"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {copiedField === 'instagram' ? (
@@ -101,8 +107,10 @@ export function ContactDetail({
 
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={(e) => onToggleImportant(contact.id, e)}
             title={isImportant ? 'Quitar importante' : 'Marcar importante'}
+            aria-label={isImportant ? 'Quitar importante' : 'Marcar importante'}
             className={`rounded-xl border px-3 py-2 text-sm font-bold transition-colors ${
               isImportant
                 ? 'border-warning bg-warning/10 text-warning'

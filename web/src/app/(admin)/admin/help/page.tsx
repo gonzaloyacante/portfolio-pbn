@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
+import { PageHeader } from '@/components/layout'
 
 export const metadata: Metadata = {
   title: 'Centro de Ayuda - Admin',
@@ -257,11 +258,10 @@ export default function AyudaPage() {
     <div className="space-y-8">
       {/* Header */}
       <div className="border-border bg-card rounded-3xl border p-8">
-        <h1 className="text-foreground mb-4 text-4xl font-bold">📘 Centro de Ayuda</h1>
-        <p className="text-foreground text-lg">
-          Bienvenida al manual de usuario de tu portfolio. Aquí encontrarás guías paso a paso para
-          gestionar todos los aspectos de tu sitio web profesional.
-        </p>
+        <PageHeader
+          title="📘 Centro de Ayuda"
+          description="Bienvenida al manual de usuario de tu portfolio. Aquí encontrarás guías paso a paso para gestionar todos los aspectos de tu sitio web profesional."
+        />
       </div>
 
       {/* Tutoriales */}
