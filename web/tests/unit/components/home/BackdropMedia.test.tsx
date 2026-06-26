@@ -172,7 +172,6 @@ describe('BackdropMedia', () => {
         className="absolute inset-0"
       />
     )
-    const firstVideo = container.querySelector('video')
     rerender(
       <BackdropMedia
         settings={{

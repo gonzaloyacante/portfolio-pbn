@@ -143,7 +143,12 @@
       "dompurify@*": "3.4.11",
       "esbuild@*": "0.25.5",
       "postcss@*": "8.5.10",
-      "uuid@*": "14.0.0"
+      "uuid@*": "14.0.0",
+      "undici@*": "7.28.0",
+      "ws@*": "7.5.11",
+      "@opentelemetry/core@*": "2.8.0",
+      "js-yaml@*": "4.2.0",
+      "@babel/core@*": "7.29.6"
     },
     "onlyBuiltDependencies": [
       "@prisma/client",

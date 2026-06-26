@@ -207,8 +207,8 @@ const GROUPS: ColorGroup[] = [
   },
 ]
 
-const FALLBACK_LIGHT = '#6c0a0a'
-const FALLBACK_DARK = '#ffaadd'
+const FALLBACK_LIGHT = 'var(--primary)'
+const FALLBACK_DARK = 'var(--secondary)'
 
 interface Props {
   initialOverrides: PublicColorOverrides

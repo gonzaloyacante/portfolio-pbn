@@ -43,7 +43,9 @@ function renderSelect(overrides: Partial<React.ComponentProps<typeof Select>> = 
 describe('Select component', () => {
   it('renders the select trigger button', () => {
     renderSelect()
-    expect(screen.getByRole('button', { name: /selecciona/i })).toBeDefined()
+    expect(screen.getByRole('combobox')).toBeDefined()
+    // El placeholder "Selecciona una opción" se muestra en el span interno
+    expect(screen.getByText('Selecciona una opción')).toBeDefined()
   })
 
   it('shows placeholder text when no value selected', () => {
@@ -58,35 +60,35 @@ describe('Select component', () => {
 
   it('opens dropdown on click', () => {
     renderSelect()
-    const btn = screen.getByRole('button')
+    const btn = screen.getByRole('combobox')
     fireEvent.click(btn)
     expect(screen.getByRole('listbox')).toBeDefined()
   })
 
   it('renders all options in dropdown', () => {
     renderSelect()
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     const options = screen.getAllByRole('option')
     expect(options).toHaveLength(3)
   })
 
   it('calls onChange when option clicked', () => {
     const { onChange } = renderSelect()
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     fireEvent.click(screen.getByText('Option 2'))
     expect(onChange).toHaveBeenCalledWith('opt-2')
   })
 
   it('closes dropdown after selection', () => {
     renderSelect()
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     fireEvent.click(screen.getByText('Option 1'))
     expect(screen.queryByRole('listbox')).toBeNull()
   })
 
   it('does not open when disabled', () => {
     renderSelect({ disabled: true })
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     expect(screen.queryByRole('listbox')).toBeNull()
   })
 
@@ -121,20 +123,20 @@ describe('Select component', () => {
 
   it('shows "Sin opciones" when options array is empty', () => {
     renderSelect({ options: [] })
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     expect(screen.getByText('Sin opciones')).toBeDefined()
   })
 
   it('marks selected option with aria-selected', () => {
     renderSelect({ value: 'opt-1' })
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     const selected = screen.getByRole('option', { selected: true })
     expect(selected).toBeDefined()
   })
 
   it('sets aria-expanded on trigger', () => {
     renderSelect()
-    const btn = screen.getByRole('button')
+    const btn = screen.getByRole('combobox')
     expect(btn.getAttribute('aria-expanded')).toBe('false')
     fireEvent.click(btn)
     expect(btn.getAttribute('aria-expanded')).toBe('true')
@@ -163,13 +165,13 @@ describe('Select component', () => {
 
   it('shows search input when searchable=true and open', () => {
     renderSelect({ searchable: true })
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     expect(screen.getByPlaceholderText('Buscar...')).toBeDefined()
   })
 
   it('filters options based on search term', () => {
     renderSelect({ searchable: true })
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     const input = screen.getByPlaceholderText('Buscar...')
     fireEvent.change(input, { target: { value: 'Option 1' } })
     const options = screen.getAllByRole('option')
@@ -178,7 +180,7 @@ describe('Select component', () => {
 
   it('shows no options when search does not match', () => {
     renderSelect({ searchable: true })
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     const input = screen.getByPlaceholderText('Buscar...')
     fireEvent.change(input, { target: { value: 'nonexistent' } })
     expect(screen.queryAllByRole('option')).toHaveLength(0)
@@ -186,7 +188,7 @@ describe('Select component', () => {
 
   it('check icon visible on selected option', () => {
     renderSelect({ value: 'opt-1' })
-    fireEvent.click(screen.getByRole('button'))
+    fireEvent.click(screen.getByRole('combobox'))
     expect(screen.getByTestId('icon-check')).toBeDefined()
   })
 })
