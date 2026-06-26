@@ -1,6 +1,7 @@
 import { getThemeSettings } from '@/actions/settings/theme'
 import { getPublicColorOverrides } from '@/actions/settings/public-colors'
 import { ThemeEditor } from '@/components/features/theme/ThemeEditor'
+import { PageHeader } from '@/components/layout'
 import { Suspense } from 'react'
 
 export const metadata = {
@@ -15,8 +16,14 @@ export default async function TemaPage() {
   ])
 
   return (
-    <Suspense fallback={<div>Cargando configuración de tema...</div>}>
-      <ThemeEditor initialData={settings} initialColorOverrides={colorOverrides} />
-    </Suspense>
+    <div className="space-y-8">
+      <PageHeader
+        title="🎨 Editor de Tema"
+        description="Personaliza el diseño y la tipografía de tu portfolio"
+      />
+      <Suspense fallback={<div>Cargando configuración de tema...</div>}>
+        <ThemeEditor initialData={settings} initialColorOverrides={colorOverrides} />
+      </Suspense>
+    </div>
   )
 }
