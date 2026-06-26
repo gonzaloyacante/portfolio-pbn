@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -8,7 +8,10 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragStartEvent,
+  DragOverEvent,
   DragEndEvent,
+  DragCancelEvent,
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -54,16 +57,54 @@ export default function SortableGrid<T>({
     })
   )
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event
+  // Local state para reorder en vivo mientras el usuario arrastra.
+  // Se sincroniza con `items` solo cuando no hay un drag en curso.
+  const [localItems, setLocalItems] = useState<T[]>(items)
+  const [isDragging, setIsDragging] = useState(false)
 
-    if (over && active.id !== over.id) {
-      const oldIndex = items.findIndex((item) => getItemId(item) === active.id)
-      const newIndex = items.findIndex((item) => getItemId(item) === over.id)
-
-      const newItems = arrayMove(items, oldIndex, newIndex)
-      await onReorder(newItems)
+  // Sync diferido: si la prop `items` cambia (ej. server action completa)
+  // y no estamos arrastrando, adoptamos el nuevo orden. Durante un drag en
+  // curso, NO reseteamos para no perder el reorder en vivo del usuario.
+  useEffect(() => {
+    if (!isDragging) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalItems(items)
     }
+  }, [items, isDragging])
+
+  const handleDragStart = (_e: DragStartEvent) => {
+    setIsDragging(true)
+  }
+
+  // Reorder en vivo: cada vez que la card arrastrada pasa por encima de otra,
+  // movemos ambas en el state para que la transición sea visualmente completa
+  // (no un "salto" al soltar).
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setLocalItems((prev) => {
+      const from = prev.findIndex((item) => getItemId(item) === active.id)
+      const to = prev.findIndex((item) => getItemId(item) === over.id)
+      if (from === -1 || to === -1 || from === to) return prev
+      return arrayMove(prev, from, to)
+    })
+  }
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    setIsDragging(false)
+    const { active, over } = event
+    if (over && active.id !== over.id) {
+      // El reorder ya se hizo en vivo — confirmamos con la server action.
+      await onReorder(localItems)
+    } else {
+      // No se movió: resincronizamos con la prop por si acaso.
+      setLocalItems(items)
+    }
+  }
+
+  const handleDragCancel = (_e: DragCancelEvent) => {
+    setIsDragging(false)
+    setLocalItems(items)
   }
 
   const gridClass =
@@ -75,14 +116,17 @@ export default function SortableGrid<T>({
     <DndContext
       sensors={disabled ? [] : sensors}
       collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
       <SortableContext
-        items={items.map(getItemId)}
+        items={localItems.map(getItemId)}
         strategy={strategy === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}
       >
         <div className={gridClass}>
-          {items.map((item) => (
+          {localItems.map((item) => (
             <SortableItem key={getItemId(item)} id={getItemId(item)}>
               {(isDragging) => renderItem(item, isDragging)}
             </SortableItem>

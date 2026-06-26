@@ -10,6 +10,7 @@ import {
   useSensors,
   closestCenter,
   type DragStartEvent,
+  type DragOverEvent,
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable'
@@ -61,16 +62,29 @@ export default function CategoryGalleryEditor({
   // ── DnD handlers ─────────────────────────────────────────────────────────
   const handleDragStart = (e: DragStartEvent) => setActiveId(e.active.id as string)
 
-  const handleDragEnd = (e: DragEndEvent) => {
+  // Reorder en vivo: cada vez que la card arrastrada pasa por encima de otra,
+  // movemos ambas en el state para que la transición sea visualmente completa
+  // (no un "salto" al soltar).
+  const handleDragOver = (e: DragOverEvent) => {
     const { active, over } = e
-    setActiveId(null)
     if (!over || active.id === over.id) return
     setImages((prev) => {
       const from = prev.findIndex((img) => img.id === active.id)
       const to = prev.findIndex((img) => img.id === over.id)
+      if (from === -1 || to === -1 || from === to) return prev
       return arrayMove(prev, from, to)
     })
     setIsDirty(true)
+  }
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e
+    setActiveId(null)
+    // El reorder ya se hizo en onDragOver. Acá solo confirmamos dirty state
+    // en caso de que se haya arrastrado sobre sí mismo (no-op).
+    if (over && active.id !== over.id) {
+      setIsDirty(true)
+    }
   }
 
   // ── Featured toggle ───────────────────────────────────────────────────────
@@ -231,6 +245,7 @@ export default function CategoryGalleryEditor({
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
             <SortableContext items={images.map((img) => img.id)}>
