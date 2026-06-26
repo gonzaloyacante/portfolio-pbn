@@ -45,28 +45,46 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
 
   return (
     <form action={handleSubmit} className="space-y-6">
-      {/* Tabs Nav */}
+      {/* Tabs Nav (custom look, a11y ARIA-compliant) */}
       <div className="overflow-x-auto border-b border-(--border)">
-        <div className="flex min-w-max gap-4 px-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`border-b-2 px-2 pb-3 text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'border-(--primary) text-(--foreground)'
-                  : 'border-transparent text-(--muted-foreground) hover:text-(--foreground)'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div
+          role="tablist"
+          aria-label="Secciones del testimonio"
+          className="flex min-w-max gap-4 px-1"
+        >
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                id={`testimonial-tab-${tab.id}`}
+                aria-selected={isActive}
+                aria-controls={`testimonial-tabpanel-${tab.id}`}
+                tabIndex={isActive ? 0 : -1}
+                onClick={() => setActiveTab(tab.id)}
+                className={`border-b-2 px-2 pb-3 text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'border-(--primary) text-(--foreground)'
+                    : 'border-transparent text-(--muted-foreground) hover:text-(--foreground)'
+                }`}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* --- GENERAL --- */}
-      <div className={activeTab === 'general' ? 'block space-y-4' : 'hidden'}>
+      <div
+        role="tabpanel"
+        id="testimonial-tabpanel-general"
+        aria-labelledby="testimonial-tab-general"
+        hidden={activeTab !== 'general'}
+        className="space-y-4"
+      >
         <Input label="Nombre del Cliente" name="name" defaultValue={testimonial.name} required />
         <TextArea
           label="Testimonio"
@@ -93,7 +111,13 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
       </div>
 
       {/* --- IDENTITY --- */}
-      <div className={activeTab === 'identity' ? 'block space-y-4' : 'hidden'}>
+      <div
+        role="tabpanel"
+        id="testimonial-tabpanel-identity"
+        aria-labelledby="testimonial-tab-identity"
+        hidden={activeTab !== 'identity'}
+        className="space-y-4"
+      >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Input
             label="Email"
@@ -137,7 +161,13 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
       </div>
 
       {/* --- ADMIN --- */}
-      <div className={activeTab === 'admin' ? 'block space-y-4' : 'hidden'}>
+      <div
+        role="tabpanel"
+        id="testimonial-tabpanel-admin"
+        aria-labelledby="testimonial-tab-admin"
+        hidden={activeTab !== 'admin'}
+        className="space-y-4"
+      >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormField
             label="Estado"
