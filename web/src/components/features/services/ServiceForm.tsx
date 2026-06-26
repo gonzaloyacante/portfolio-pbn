@@ -69,28 +69,46 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      {/* Tabs Nav */}
+      {/* Tabs Nav (custom look, a11y ARIA-compliant) */}
       <div className="overflow-x-auto border-b border-(--border)">
-        <div className="flex min-w-max gap-4 px-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`border-b-2 px-2 pb-3 text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'border-(--primary) text-(--foreground)'
-                  : 'border-transparent text-(--muted-foreground) hover:text-(--foreground)'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        <div
+          role="tablist"
+          aria-label="Secciones del servicio"
+          className="flex min-w-max gap-4 px-1"
+        >
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                id={`service-tab-${tab.id}`}
+                aria-selected={isActive}
+                aria-controls={`service-tabpanel-${tab.id}`}
+                tabIndex={isActive ? 0 : -1}
+                onClick={() => setActiveTab(tab.id)}
+                className={`border-b-2 px-2 pb-3 text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'border-(--primary) text-(--foreground)'
+                    : 'border-transparent text-(--muted-foreground) hover:text-(--foreground)'
+                }`}
+              >
+                {tab.label}
+              </button>
+            )
+          })}
         </div>
       </div>
 
       {/* --- GENERAL --- */}
-      <div className={activeTab === 'general' ? 'block space-y-4' : 'hidden'}>
+      <div
+        role="tabpanel"
+        id="service-tabpanel-general"
+        aria-labelledby="service-tab-general"
+        hidden={activeTab !== 'general'}
+        className="space-y-4"
+      >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormField
             label="Nombre del Servicio"
@@ -143,7 +161,13 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
       </div>
 
       {/* --- PRICING --- */}
-      <div className={activeTab === 'pricing' ? 'block space-y-4' : 'hidden'}>
+      <div
+        role="tabpanel"
+        id="service-tabpanel-pricing"
+        aria-labelledby="service-tab-pricing"
+        hidden={activeTab !== 'pricing'}
+        className="space-y-4"
+      >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <FormField
             label="Precio Base"
@@ -178,7 +202,13 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
       </div>
 
       {/* --- SCHEDULE --- */}
-      <div className={activeTab === 'schedule' ? 'block space-y-4' : 'hidden'}>
+      <div
+        role="tabpanel"
+        id="service-tabpanel-schedule"
+        aria-labelledby="service-tab-schedule"
+        hidden={activeTab !== 'schedule'}
+        className="space-y-4"
+      >
         <DurationField service={service} />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormField
@@ -203,7 +233,13 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
       </div>
 
       {/* --- DETAILS --- */}
-      <div className={activeTab === 'details' ? 'block space-y-4' : 'hidden'}>
+      <div
+        role="tabpanel"
+        id="service-tabpanel-details"
+        aria-labelledby="service-tab-details"
+        hidden={activeTab !== 'details'}
+        className="space-y-4"
+      >
         <FormField
           label="Video URL"
           name="videoUrl"
