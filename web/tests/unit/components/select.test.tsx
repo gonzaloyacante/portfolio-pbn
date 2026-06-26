@@ -143,8 +143,10 @@ describe('Select component', () => {
   })
 
   it('applies custom className', () => {
-    const { container } = renderSelect({ className: 'custom-class' })
-    expect(container.firstElementChild?.className).toContain('custom-class')
+    renderSelect({ className: 'custom-class' })
+    // El className se aplica al button trigger, no al wrapper.
+    const trigger = screen.getByRole('combobox')
+    expect(trigger.className).toContain('custom-class')
   })
 
   it('renders clearable button when value is set and clearable=true', () => {

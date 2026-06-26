@@ -136,7 +136,7 @@ export const Select = ({
           sizeClasses[inputSize],
           variantClasses[variant],
           !disabled && 'cursor-pointer',
-          hasError && 'border-red-500 focus:border-red-500 focus:ring-red-200',
+          hasError && 'border-destructive focus:border-destructive focus:ring-destructive/20',
           className
         )}
         onClick={() => !disabled && setIsOpen(!isOpen)}
