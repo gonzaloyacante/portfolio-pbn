@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button, Input, Card, TextArea } from '@/components/ui'
 import CategoryCoverSelector from '@/components/features/categories/CategoryCoverSelector'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Images } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
 
 interface EditCategoryFormProps {
@@ -61,7 +61,8 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
           className="gap-2"
           onClick={() => router.push(ROUTES.admin.categoryGallery(category.id))}
         >
-          Ordenar / Gestionar Galería
+          <Images size={14} />
+          Gestionar galería
         </Button>
       </div>
 

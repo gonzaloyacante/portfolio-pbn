@@ -43,7 +43,7 @@ export default function SortableImage({ id, url, onDelete }: SortableImageProps)
           e.stopPropagation()
           onDelete(id)
         }}
-        className="bg-destructive hover:bg-destructive/80 absolute top-2 right-2 z-20 flex h-8 w-8 items-center justify-center rounded-full text-white opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:scale-110"
+        className="bg-destructive hover:bg-destructive/80 absolute top-2 right-2 z-20 flex h-8 w-8 items-center justify-center rounded-full text-white opacity-80 shadow-lg transition-all group-hover:opacity-100 hover:scale-110"
       >
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
@@ -55,7 +55,7 @@ export default function SortableImage({ id, url, onDelete }: SortableImageProps)
         </svg>
       </button>
 
-      <div className="pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 to-transparent p-2 pt-8 text-center text-xs font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 to-transparent p-2 pt-8 text-center text-xs font-bold text-white opacity-70 transition-opacity group-hover:opacity-100">
         Arrastrar para ordenar
       </div>
     </div>

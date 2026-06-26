@@ -1,8 +1,8 @@
 'use client'
 
-import { useActionState, useEffect } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input, TextArea } from '@/components/ui'
+import { Button, Input, TextArea, Select } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { ROUTES } from '@/config/routes'
 import { updateBookingAdmin, type BookingForEdit } from '@/actions/cms/bookings'
@@ -38,6 +38,10 @@ interface Props {
 
 export default function BookingEditForm({ booking, services }: Props) {
   const router = useRouter()
+  const [status, setStatus] = useState(booking.status)
+  const [serviceId, setServiceId] = useState(booking.serviceId)
+  const [paymentStatus, setPaymentStatus] = useState(booking.paymentStatus ?? 'PENDING')
+  const [paymentMethod, setPaymentMethod] = useState(booking.paymentMethod ?? '')
 
   const updateWithId = updateBookingAdmin.bind(null, booking.id)
   const [state, formAction, isPending] = useActionState(updateWithId, null)
@@ -58,44 +62,24 @@ export default function BookingEditForm({ booking, services }: Props) {
     <form action={formAction} className="space-y-6">
       {/* Status */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <label htmlFor="status" className="text-foreground text-sm font-medium">
-            Estado de la reserva
-          </label>
-          <select
-            id="status"
-            name="status"
-            defaultValue={booking.status}
-            className="border-border bg-background text-foreground focus:ring-primary w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
-          >
-            {STATUS_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          label="Estado de la reserva"
+          name="status"
+          value={status}
+          onChange={setStatus}
+          options={STATUS_OPTIONS}
+        />
 
         <div className="space-y-1.5">
-          <label htmlFor="serviceId" className="text-foreground text-sm font-medium">
-            Servicio *
-          </label>
-          <select
-            id="serviceId"
+          <Select
+            label="Servicio *"
             name="serviceId"
-            defaultValue={booking.serviceId}
+            value={serviceId}
+            onChange={setServiceId}
+            options={services.map((s) => ({ value: s.id, label: s.name }))}
             required
-            className="border-border bg-background text-foreground focus:ring-primary w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
-          >
-            {services.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-          {state?.fieldErrors?.serviceId && (
-            <p className="text-destructive text-xs">{state.fieldErrors.serviceId[0]}</p>
-          )}
+            error={state?.fieldErrors?.serviceId?.[0]}
+          />
         </div>
       </div>
 
@@ -225,40 +209,21 @@ export default function BookingEditForm({ booking, services }: Props) {
               defaultValue={booking.totalAmount ?? ''}
             />
           </div>
-          <div className="space-y-1.5">
-            <label htmlFor="paymentStatus" className="text-foreground text-sm font-medium">
-              Estado de pago
-            </label>
-            <select
-              id="paymentStatus"
-              name="paymentStatus"
-              defaultValue={booking.paymentStatus ?? 'PENDING'}
-              className="border-border bg-background text-foreground focus:ring-primary w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
-            >
-              {PAYMENT_STATUS_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-1.5">
-            <label htmlFor="paymentMethod" className="text-foreground text-sm font-medium">
-              Método de pago
-            </label>
-            <select
-              id="paymentMethod"
-              name="paymentMethod"
-              defaultValue={booking.paymentMethod ?? ''}
-              className="border-border bg-background text-foreground focus:ring-primary w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
-            >
-              {PAYMENT_METHOD_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="Estado de pago"
+            name="paymentStatus"
+            value={paymentStatus}
+            onChange={setPaymentStatus}
+            options={PAYMENT_STATUS_OPTIONS}
+          />
+          <Select
+            label="Método de pago"
+            name="paymentMethod"
+            value={paymentMethod}
+            onChange={setPaymentMethod}
+            options={PAYMENT_METHOD_OPTIONS}
+            clearable
+          />
         </div>
       </fieldset>
 
@@ -269,6 +234,7 @@ export default function BookingEditForm({ booking, services }: Props) {
           variant="secondary"
           onClick={() => router.push(ROUTES.admin.calendar)}
           disabled={isPending}
+          loading={isPending}
         >
           Cancelar
         </Button>
