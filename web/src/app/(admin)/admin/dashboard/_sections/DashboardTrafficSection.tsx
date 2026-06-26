@@ -15,7 +15,7 @@ export default function DashboardTrafficSection() {
           <a
             href="https://analytics.google.com/analytics/web/"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="text-primary inline-flex min-h-11 items-center font-semibold hover:underline"
           >
             Abrir Google Analytics
