@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Button, useConfirmDialog } from '@/components/ui'
 import { deleteTestimonial } from '@/actions/cms/testimonials'
 import { showToast } from '@/lib/toast'
+import { Trash2 } from 'lucide-react'
 
 interface TestimonialDeleteButtonProps {
   testimonialId: string
@@ -47,7 +48,7 @@ export default function TestimonialDeleteButton({
         aria-label={`Eliminar testimonio de ${testimonialName}`}
         onClick={handleDelete}
       >
-        🗑️
+        <Trash2 size={14} />
       </Button>
       <Dialog />
     </>
