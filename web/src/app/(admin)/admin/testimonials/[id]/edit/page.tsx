@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import TestimonialEditForm from '@/components/features/testimonials/TestimonialEditForm'
-import { Section } from '@/components/layout'
+import { PageHeader } from '@/components/layout'
+import { ROUTES } from '@/config/routes'
 
 interface EditTestimonialPageProps {
   params: Promise<{
@@ -25,9 +26,11 @@ export default async function EditTestimonialPage({ params }: EditTestimonialPag
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Section title={`Editar Testimonio: ${testimonial.name}`}>
-        <TestimonialEditForm testimonial={safeTestimonial} />
-      </Section>
+      <PageHeader
+        title={`Editar Testimonio: ${testimonial.name}`}
+        backUrl={ROUTES.admin.testimonials}
+      />
+      <TestimonialEditForm testimonial={safeTestimonial} />
     </div>
   )
 }

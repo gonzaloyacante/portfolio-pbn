@@ -26,19 +26,18 @@ export default async function CategoriesPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <PageHeader
-          title="📁 Gestión de Categorías"
-          description="Administra las categorías y galerías del portfolio"
-        />
-        <Button asChild className="gap-2">
-          <Link href={ROUTES.admin.newCategory}>
-            <Plus size={16} />
-            Nueva Categoría
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title="📁 Gestión de Categorías"
+        description="Administra las categorías y galerías del portfolio"
+        actions={
+          <Button asChild className="gap-2">
+            <Link href={ROUTES.admin.newCategory}>
+              <Plus size={16} />
+              Nueva Categoría
+            </Link>
+          </Button>
+        }
+      />
 
       {/* Gallery display settings */}
       <CategorySettingsCard settings={categorySettings} />

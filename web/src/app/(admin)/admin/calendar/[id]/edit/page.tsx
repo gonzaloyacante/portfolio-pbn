@@ -3,10 +3,11 @@ import type { Metadata } from 'next'
 import { requireAdmin } from '@/lib/security-server'
 import { getBookingForEdit } from '@/actions/cms/bookings'
 import { getServices } from '@/actions/cms/services'
-import { Section } from '@/components/layout'
+import { PageHeader } from '@/components/layout'
 import BookingEditForm from '@/components/features/contact/bookings/BookingEditForm'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { ROUTES } from '@/config/routes'
 
 export const dynamic = 'force-dynamic'
 
@@ -38,14 +39,16 @@ export default async function BookingEditPage({ params }: Props) {
   const safeBooking = JSON.parse(JSON.stringify(booking))
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <Section title={`Editar Reserva — ${booking.clientName}`}>
-        <p className="text-muted-foreground mb-6 text-sm">{dateLabel}</p>
-        <BookingEditForm
-          booking={safeBooking}
-          services={services.map((s) => ({ id: s.id, name: s.name }))}
-        />
-      </Section>
+    <div className="mx-auto max-w-3xl space-y-6">
+      <PageHeader
+        title={`Editar Reserva — ${booking.clientName}`}
+        description={dateLabel}
+        backUrl={ROUTES.admin.calendar}
+      />
+      <BookingEditForm
+        booking={safeBooking}
+        services={services.map((s) => ({ id: s.id, name: s.name }))}
+      />
     </div>
   )
 }
