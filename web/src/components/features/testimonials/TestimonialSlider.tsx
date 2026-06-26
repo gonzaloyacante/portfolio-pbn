@@ -99,6 +99,7 @@ export default function TestimonialSlider({ testimonials, autoAdvanceMs }: Testi
       {total > cardsVisible && (
         <div className="mt-8 flex items-center justify-center gap-4">
           <button
+            type="button"
             onClick={prev}
             disabled={start === 0}
             aria-label="Anterior"
@@ -112,6 +113,7 @@ export default function TestimonialSlider({ testimonials, autoAdvanceMs }: Testi
             {Array.from({ length: maxStart + 1 }).map((_, i) => (
               <button
                 key={i}
+                type="button"
                 onClick={() => goTo(i)}
                 aria-label={`Ir al grupo ${i + 1}`}
                 className="flex items-center justify-center p-1.5"
@@ -128,6 +130,7 @@ export default function TestimonialSlider({ testimonials, autoAdvanceMs }: Testi
           </div>
 
           <button
+            type="button"
             onClick={next}
             disabled={start >= maxStart}
             aria-label="Siguiente"

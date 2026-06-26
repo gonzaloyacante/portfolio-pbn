@@ -89,6 +89,7 @@ export function NewCategoryForm() {
             variant="ghost"
             className="w-full flex-1"
             disabled={isPending}
+            loading={isPending}
           >
             <Link
               href={ROUTES.admin.categories}
@@ -98,7 +99,7 @@ export function NewCategoryForm() {
               Cancelar
             </Link>
           </Button>
-          <Button type="submit" className="flex-1" disabled={isPending}>
+          <Button type="submit" className="flex-1" disabled={isPending} loading={isPending}>
             {isPending ? 'Creando...' : 'Crear Categoría'}
           </Button>
         </div>

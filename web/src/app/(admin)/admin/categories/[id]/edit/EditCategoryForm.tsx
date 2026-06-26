@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input, Card, TextArea } from '@/components/ui'
-import CategoryCoverSelector from '@/components/features/categories/CategoryCoverSelector'
 import Link from 'next/link'
-import { ArrowLeft, Images } from 'lucide-react'
+import { Button, Input, Card, TextArea } from '@/components/ui'
+import { PageHeader } from '@/components/layout'
+import CategoryCoverSelector from '@/components/features/categories/CategoryCoverSelector'
+import { Images } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
 
 interface EditCategoryFormProps {
@@ -41,30 +42,21 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <Button asChild variant="ghost" size="sm" className="gap-2">
-            <Link href={ROUTES.admin.categories}>
-              <ArrowLeft size={16} />
-              Volver
-            </Link>
+      <PageHeader
+        title={`Editar: ${category.name}`}
+        backUrl={ROUTES.admin.categories}
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => router.push(ROUTES.admin.categoryGallery(category.id))}
+          >
+            <Images size={14} />
+            Gestionar galería
           </Button>
-          <div>
-            <h1 className="text-foreground text-2xl font-bold">✏️ Editar: {category.name}</h1>
-          </div>
-        </div>
-
-        {/* Gestionar galería (pantalla completa) */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2"
-          onClick={() => router.push(ROUTES.admin.categoryGallery(category.id))}
-        >
-          <Images size={14} />
-          Gestionar galería
-        </Button>
-      </div>
+        }
+      />
 
       <Card className="p-8">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -123,6 +115,7 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
               variant="ghost"
               className="w-full flex-1"
               disabled={isPending}
+              loading={isPending}
             >
               <Link
                 href={ROUTES.admin.categories}
@@ -132,7 +125,7 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
                 Cancelar
               </Link>
             </Button>
-            <Button type="submit" className="flex-1" disabled={isPending}>
+            <Button type="submit" className="flex-1" disabled={isPending} loading={isPending}>
               {isPending ? 'Guardando...' : 'Guardar Cambios'}
             </Button>
           </div>

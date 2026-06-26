@@ -43,8 +43,10 @@ export function ContactCard({
         <h3 className="text-foreground font-bold">{contact.name}</h3>
         <div className="flex items-center gap-1">
           <button
+            type="button"
             onClick={(e) => onToggleImportant(contact.id, e)}
             title={isImportant ? 'Quitar importante' : 'Marcar importante'}
+            aria-label={isImportant ? 'Quitar importante' : 'Marcar importante'}
             className="text-muted-foreground hover:text-warning transition-colors"
           >
             <Star className={`h-3.5 w-3.5 ${isImportant ? 'fill-warning text-warning' : ''}`} />
