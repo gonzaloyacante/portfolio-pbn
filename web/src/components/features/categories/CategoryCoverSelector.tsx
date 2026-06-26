@@ -20,13 +20,11 @@ import type { GalleryCoverImage } from './types'
 interface CategoryCoverSelectorProps {
   categoryId: string
   currentCoverUrl?: string | null
-  onSelect?: (url: string) => void
 }
 
 export default function CategoryCoverSelector({
   categoryId,
   currentCoverUrl,
-  onSelect,
 }: CategoryCoverSelectorProps) {
   const [selectedUrl, setSelectedUrl] = useState<string | null>(currentCoverUrl || null)
   const [galleryImages, setGalleryImages] = useState<GalleryCoverImage[]>([])
@@ -46,7 +44,6 @@ export default function CategoryCoverSelector({
 
   const handleSelect = (url: string) => {
     setSelectedUrl(url)
-    onSelect?.(url)
   }
 
   return (

@@ -66,9 +66,6 @@ export function GalleryImagePicker({
               </div>
             </div>
           )}
-          <div className="bg-primary/60 text-primary-foreground absolute right-0 bottom-0 left-0 truncate p-1 text-center text-[10px] opacity-0 transition-opacity group-hover:opacity-100">
-            {img.url.split('/').pop()?.split('.')[0] ?? 'imagen'}
-          </div>
         </button>
       ))}
     </div>

@@ -21,7 +21,7 @@ export default function AlertsSection({
         {contactsCount > 0 && (
           <Link
             href={ROUTES.admin.messages}
-            className="group bg-card flex cursor-pointer items-center gap-3 rounded-2xl border border-yellow-400/50 p-4 transition-all duration-200 hover:scale-[1.02] hover:border-yellow-400 hover:shadow-md active:scale-[0.98]"
+            className="group bg-card border-warning/50 hover:border-warning flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
           >
             <span className="text-3xl transition-transform group-hover:scale-110">📬</span>
             <div>
@@ -37,7 +37,7 @@ export default function AlertsSection({
         {pendingTestimonials > 0 && (
           <Link
             href={ROUTES.admin.testimonials}
-            className="group bg-card flex cursor-pointer items-center gap-3 rounded-2xl border border-blue-400/50 p-4 transition-all duration-200 hover:scale-[1.02] hover:border-blue-400 hover:shadow-md active:scale-[0.98]"
+            className="group bg-card border-info/50 hover:border-info flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
           >
             <span className="text-3xl transition-transform group-hover:scale-110">⭐</span>
             <div>
@@ -53,7 +53,7 @@ export default function AlertsSection({
         {deletedCount > 0 && (
           <Link
             href={ROUTES.admin.trash}
-            className="group bg-card flex cursor-pointer items-center gap-3 rounded-2xl border border-red-400/50 p-4 transition-all duration-200 hover:scale-[1.02] hover:border-red-400 hover:shadow-md active:scale-[0.98]"
+            className="group bg-card border-destructive/50 hover:border-destructive flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
           >
             <span className="text-3xl transition-transform group-hover:scale-110">🗑️</span>
             <div>

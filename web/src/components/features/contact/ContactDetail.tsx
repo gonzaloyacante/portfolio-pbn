@@ -151,7 +151,6 @@ export function ContactDetail({
             <p className="text-foreground text-sm">
               <span className="text-muted-foreground">Servicio: </span>
               <span className="font-semibold">{contact.service.name}</span>
-              <span className="text-muted-foreground ml-2 text-xs">({contact.service.slug})</span>
             </p>
           ) : null}
         </div>

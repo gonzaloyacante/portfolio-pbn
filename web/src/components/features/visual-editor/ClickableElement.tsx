@@ -4,7 +4,6 @@ import { useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { ReactNode, HTMLAttributes } from 'react'
 import type { EditableElement } from './types'
-import type { ViewportMode } from './types'
 
 // Omit 'id', 'onDrag', 'onDragEnd' from HTMLAttributes to avoid conflict
 interface ClickableElementProps extends Omit<

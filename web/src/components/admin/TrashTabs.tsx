@@ -10,9 +10,11 @@ import {
   TabsContent,
   EmptyState,
   OptimizedImage,
+  useConfirmDialog,
 } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { showToast } from '@/lib/toast'
+import { RotateCcw, Trash2 } from 'lucide-react'
 
 interface BaseTrashItem {
   id: string
@@ -47,6 +49,7 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [activeTab, setActiveTab] = useState('categories')
+  const { confirm, Dialog } = useConfirmDialog()
 
   const handleRestore = async (type: string, id: string) => {
     try {
@@ -66,10 +69,13 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
   }
 
   const handlePurge = async (type: string, id: string) => {
-    if (
-      !confirm('¿Estás seguro de eliminar esto permanentemente? Esta acción no se puede deshacer.')
-    )
-      return
+    const isConfirmed = await confirm({
+      title: '¿Eliminar permanentemente?',
+      message: 'Esta acción no se puede deshacer. El elemento se borrará para siempre.',
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    })
+    if (!isConfirmed) return
 
     try {
       const res = await fetch(`/api/admin/trash/${type}/${id}`, {
@@ -129,9 +135,7 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
             </div>
 
             <div className="hidden flex-col items-end gap-2 md:flex">
-              <p className="text-xs text-red-600 dark:text-red-400">
-                ⏰ Faltan {daysRemaining} días
-              </p>
+              <p className="text-destructive text-xs font-medium">⏰ Faltan {daysRemaining} días</p>
               <p className="text-muted-foreground text-xs">{deletedAt.toLocaleDateString()}</p>
             </div>
           </div>
@@ -144,8 +148,10 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
               disabled={isPending}
               variant="secondary"
               size="sm"
+              className="gap-2"
             >
-              ♻️ Restaurar
+              <RotateCcw size={14} />
+              Restaurar
             </Button>
             <Button
               type="button"
@@ -153,10 +159,12 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
               disabled={isPending}
               variant="destructive"
               size="sm"
+              className="gap-2"
             >
-              🗑️ Purga
+              <Trash2 size={14} />
+              Eliminar
             </Button>
-            <div className="mt-2 ml-auto text-xs text-red-600 md:hidden dark:text-red-400">
+            <div className="text-destructive mt-2 ml-auto text-xs font-medium md:hidden">
               ⏰ {daysRemaining} días
             </div>
           </div>
@@ -207,6 +215,7 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
           'No hay testimonios en la papelera'
         )}
       </TabsContent>
+      <Dialog />
     </Tabs>
   )
 }

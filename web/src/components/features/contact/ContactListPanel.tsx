@@ -67,7 +67,11 @@ export function ContactListPanel({
             <p className="text-muted-foreground font-medium">
               {filter === 'all'
                 ? 'No hay mensajes aún'
-                : `No hay mensajes ${filter === 'unread' ? 'sin leer' : 'respondidos'}`}
+                : filter === 'unread'
+                  ? 'No hay mensajes sin leer'
+                  : filter === 'important'
+                    ? 'No hay mensajes marcados como importantes'
+                    : 'No hay mensajes respondidos'}
             </p>
           </div>
         )}

@@ -32,7 +32,7 @@ export function ImageSinglePreview({
         variant="card"
         placeholder="empty"
       />
-      <div className="bg-foreground/50 absolute inset-0 flex items-center justify-center gap-4 opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="bg-foreground/50 absolute inset-0 flex items-center justify-center gap-4 opacity-70 transition-opacity group-hover:opacity-100">
         <button
           type="button"
           onClick={onEdit}

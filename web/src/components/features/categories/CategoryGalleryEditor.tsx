@@ -10,6 +10,7 @@ import {
   useSensors,
   closestCenter,
   type DragStartEvent,
+  type DragOverEvent,
   type DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable'
@@ -18,8 +19,8 @@ import {
   resetCategoryGalleryOrder,
   toggleCategoryImageFeatured,
 } from '@/actions/gallery-ordering'
-import { saveGalleryImages } from '@/actions/cms/content'
-import { Button } from '@/components/ui'
+import { saveGalleryImages, deleteCategoryImage } from '@/actions/cms/content'
+import { AnimatePresence, Button, ConfirmDialog } from '@/components/ui'
 import { Save, RotateCcw, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
@@ -49,6 +50,8 @@ export default function CategoryGalleryEditor({
   const [isDirty, setIsDirty] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const { columnsData, colClass } = useMasonryColumns(images, 3)
 
   const sensors = useSensors(
@@ -59,16 +62,29 @@ export default function CategoryGalleryEditor({
   // ── DnD handlers ─────────────────────────────────────────────────────────
   const handleDragStart = (e: DragStartEvent) => setActiveId(e.active.id as string)
 
-  const handleDragEnd = (e: DragEndEvent) => {
+  // Reorder en vivo: cada vez que la card arrastrada pasa por encima de otra,
+  // movemos ambas en el state para que la transición sea visualmente completa
+  // (no un "salto" al soltar).
+  const handleDragOver = (e: DragOverEvent) => {
     const { active, over } = e
-    setActiveId(null)
     if (!over || active.id === over.id) return
     setImages((prev) => {
       const from = prev.findIndex((img) => img.id === active.id)
       const to = prev.findIndex((img) => img.id === over.id)
+      if (from === -1 || to === -1 || from === to) return prev
       return arrayMove(prev, from, to)
     })
     setIsDirty(true)
+  }
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e
+    setActiveId(null)
+    // El reorder ya se hizo en onDragOver. Acá solo confirmamos dirty state
+    // en caso de que se haya arrastrado sobre sí mismo (no-op).
+    if (over && active.id !== over.id) {
+      setIsDirty(true)
+    }
   }
 
   // ── Featured toggle ───────────────────────────────────────────────────────
@@ -80,6 +96,48 @@ export default function CategoryGalleryEditor({
         prev.map((img) => (img.id === imageId ? { ...img, isFeatured: !val } : img))
       )
       showToast.error('Error al actualizar la imagen destacada')
+    }
+  }
+
+  // ── Delete ────────────────────────────────────────────────────────────────
+  const handleDeleteRequest = (imageId: string) => {
+    setPendingDeleteId(imageId)
+  }
+
+  const handleDeleteConfirm = async () => {
+    const imageId = pendingDeleteId
+    if (!imageId) return
+    setPendingDeleteId(null)
+    setDeletingId(imageId)
+
+    // Optimistic: removemos del state local para disparar la animación de exit
+    const removed = images.find((img) => img.id === imageId) ?? null
+    setImages((prev) => prev.filter((img) => img.id !== imageId))
+
+    try {
+      const result = await deleteCategoryImage(imageId)
+      if (result.success) {
+        showToast.success('Imagen eliminada de la galería')
+      } else {
+        // Revertimos el optimistic update
+        if (removed) {
+          setImages((prev) => {
+            const exists = prev.some((img) => img.id === removed.id)
+            return exists ? prev : [...prev, removed]
+          })
+        }
+        showToast.error(result.error ?? 'Error al eliminar la imagen')
+      }
+    } catch {
+      if (removed) {
+        setImages((prev) => {
+          const exists = prev.some((img) => img.id === removed.id)
+          return exists ? prev : [...prev, removed]
+        })
+      }
+      showToast.error('Error inesperado al eliminar la imagen')
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -148,6 +206,8 @@ export default function CategoryGalleryEditor({
     }
   }
 
+  const pendingImage = pendingDeleteId ? images.find((img) => img.id === pendingDeleteId) : null
+
   return (
     <div className="space-y-6">
       <CategoryGalleryToolbar
@@ -177,28 +237,33 @@ export default function CategoryGalleryEditor({
         <>
           <p className="text-muted-foreground rounded-xl border border-dashed px-4 py-3 text-sm">
             💡 Este orden es el que verán los visitantes en la galería pública. Arrastra las
-            imágenes para cambiar su posición. El orden de columnas replica exactamente la web
-            pública.
+            imágenes para cambiar su posición. Usa la estrella para destacar y la papelera para
+            eliminar. El orden de columnas replica exactamente la web pública.
           </p>
 
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
           >
             <SortableContext items={images.map((img) => img.id)}>
               <div className={cn('grid gap-4', colClass)}>
                 {columnsData.map((col, colIndex) => (
                   <div key={colIndex} className="flex flex-col gap-4">
-                    {col.items.map((img) => (
-                      <SortableImageCard
-                        key={img.id}
-                        image={img}
-                        index={img.flatIndex}
-                        onToggleFeatured={handleToggleFeatured}
-                      />
-                    ))}
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      {col.items.map((img) => (
+                        <SortableImageCard
+                          key={img.id}
+                          image={img}
+                          index={img.flatIndex}
+                          onToggleFeatured={handleToggleFeatured}
+                          onDelete={handleDeleteRequest}
+                          isDeleting={deletingId === img.id}
+                        />
+                      ))}
+                    </AnimatePresence>
                   </div>
                 ))}
               </div>
@@ -224,6 +289,21 @@ export default function CategoryGalleryEditor({
           </AnimatePresenceWrapper>
         </>
       )}
+
+      <ConfirmDialog
+        open={pendingDeleteId !== null}
+        title="¿Eliminar imagen de la galería?"
+        message={
+          pendingImage
+            ? `Se eliminará "${pendingImage.title}" de la galería de la categoría. La imagen también se borrará de Cloudinary. Esta acción no se puede deshacer.`
+            : 'Se eliminará la imagen de la galería. Esta acción no se puede deshacer.'
+        }
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setPendingDeleteId(null)}
+      />
     </div>
   )
 }

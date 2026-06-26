@@ -47,12 +47,12 @@ export function ViewportPositionControl({
   const activeFields =
     viewportMode === 'mobile' ? mobileFields : viewportMode === 'tablet' ? tabletFields : undefined
 
-  const mobileXKey = mobileFields?.offsetX
-  const mobileYKey = mobileFields?.offsetY
-  const mobileRotKey = mobileFields?.rotation
-  const tabletXKey = tabletFields?.offsetX
-  const tabletYKey = tabletFields?.offsetY
-  const tabletRotKey = tabletFields?.rotation
+  const _mobileXKey = mobileFields?.offsetX
+  const _mobileYKey = mobileFields?.offsetY
+  const _mobileRotKey = mobileFields?.rotation
+  const _tabletXKey = tabletFields?.offsetX
+  const _tabletYKey = tabletFields?.offsetY
+  const _tabletRotKey = tabletFields?.rotation
 
   const desktopX = (settings[fields.offsetX!] as number) ?? 0
   const desktopY = (settings[fields.offsetY!] as number) ?? 0

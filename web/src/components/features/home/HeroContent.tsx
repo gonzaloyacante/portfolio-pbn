@@ -34,7 +34,7 @@ export function HeroContent({
   const s = settings || ({} as Partial<HomeSettingsData>)
   const detectedIsMobile = useIsMobile()
   const detectedViewport = useViewportMode()
-  const isMobile = forceViewportMode ? forceViewportMode === 'mobile' : detectedIsMobile
+  const _isMobile = forceViewportMode ? forceViewportMode === 'mobile' : detectedIsMobile
   const viewportMode = forceViewportMode ?? viewportModeProp ?? detectedViewport
 
   const fontsHash = [
@@ -51,7 +51,7 @@ export function HeroContent({
 
   // Drag: mantener un mapa en memoria con los offsets temporales durante el drag.
   // Al terminar (onDragEnd), aplicamos el delta sobre el offset actual y llamamos onUpdate.
-  const liveOffsetRef = useRef<Partial<Record<DraggableElement, { x: number; y: number }>>>({})
+  const _liveOffsetRef = useRef<Partial<Record<DraggableElement, { x: number; y: number }>>>({})
 
   const handleDragEnd = (elementId: DraggableElement, deltaX: number, deltaY: number) => {
     if (!onUpdate) return

@@ -88,6 +88,7 @@ export const Select = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const generatedId = useId()
   const triggerId = id || `select-${generatedId}`
+  const listboxId = `${triggerId}-listbox`
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -126,6 +127,7 @@ export const Select = ({
       )}
       <button
         type="button"
+        role="combobox"
         className={cn(
           'w-full rounded-lg transition-all duration-200 outline-none',
           'flex items-center justify-between text-left',
@@ -134,13 +136,14 @@ export const Select = ({
           sizeClasses[inputSize],
           variantClasses[variant],
           !disabled && 'cursor-pointer',
-          hasError && 'border-red-500 focus:border-red-500 focus:ring-red-200',
+          hasError && 'border-destructive focus:border-destructive focus:ring-destructive/20',
           className
         )}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         id={triggerId}
         aria-haspopup="listbox"
+        aria-controls={isOpen ? listboxId : undefined}
         aria-expanded={isOpen}
         aria-invalid={hasError}
         aria-required={required}
@@ -178,6 +181,7 @@ export const Select = ({
 
       {isOpen && (
         <ul
+          id={listboxId}
           className={cn(
             'border-input bg-popover text-popover-foreground',
             'absolute right-0 left-0 z-50 mt-1 max-h-60 overflow-auto rounded-lg border py-1 text-sm shadow-xl'
