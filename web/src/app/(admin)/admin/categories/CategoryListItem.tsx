@@ -25,7 +25,9 @@ export function CategoryListItem({ category, isDragging, onDelete }: CategoryLis
         isDragging ? 'bg-accent/10 shadow-lg' : ''
       }`}
     >
-      <div className="w-6" />
+      {/* El drag handle lo renderiza SortableGrid (absolute, -left-2 fuera de la card).
+          Este div reserva el espacio visual para que el thumbnail no se solape con el handle. */}
+      <div className="w-2 shrink-0" />
 
       <div className="bg-muted relative h-16 w-24 shrink-0 overflow-hidden rounded-md">
         {thumbnailUrl ? (

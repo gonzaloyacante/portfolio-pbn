@@ -113,10 +113,10 @@ function SortableItem({ id, children }: SortableItemProps) {
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
       <div className="relative">
-        {/* Drag Handle */}
+        {/* Drag Handle — siempre visible (tenue sin hover, pleno en hover) */}
         <button
           {...listeners}
-          className="bg-muted text-muted-foreground hover:bg-muted-foreground/10 hover:text-foreground absolute top-2 -left-2 z-10 flex h-8 w-8 cursor-grab items-center justify-center rounded-md opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+          className="bg-muted text-muted-foreground hover:bg-muted-foreground/20 hover:text-foreground absolute top-2 -left-2 z-10 flex h-8 w-8 cursor-grab items-center justify-center rounded-md opacity-70 shadow-sm transition-opacity hover:opacity-100 active:cursor-grabbing"
           title="Arrastrar para reordenar"
         >
           <GripVertical size={16} />

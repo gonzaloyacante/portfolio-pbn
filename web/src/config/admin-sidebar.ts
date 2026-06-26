@@ -9,8 +9,10 @@ import {
   User,
   Share2,
   Palette,
-  Globe,
+  Sliders,
   Trash2,
+  HelpCircle,
+  Lock,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -64,7 +66,7 @@ export const menuItems: SidebarItem[] = [
   {
     href: ROUTES.admin.siteSettings,
     label: 'Sitio publico',
-    icon: Globe,
+    icon: Sliders,
   },
   {
     href: ROUTES.admin.theme,
@@ -75,5 +77,15 @@ export const menuItems: SidebarItem[] = [
     href: ROUTES.admin.trash,
     label: 'Papelera',
     icon: Trash2,
+  },
+  {
+    href: ROUTES.admin.help,
+    label: 'Ayuda',
+    icon: HelpCircle,
+  },
+  {
+    href: ROUTES.admin.account,
+    label: 'Mi Cuenta',
+    icon: Lock,
   },
 ]

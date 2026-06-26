@@ -1,12 +1,10 @@
-import { PageHeader } from '@/components/layout'
+import { redirect } from 'next/navigation'
+import { ROUTES } from '@/config/routes'
 
-export default function ProfilePage() {
-  return (
-    <div className="mx-auto max-w-3xl space-y-8">
-      <PageHeader title="Mi Cuenta" description="Gestiona tu perfil de administrador" />
-      <div className="border-border bg-card rounded-lg border p-6 shadow-sm">
-        <p>Funcionalidad de cambio de contraseña próximamente.</p>
-      </div>
-    </div>
-  )
+/**
+ * Legacy route — el cambio de contraseña vive ahora en `/admin/mi-cuenta`.
+ * Redirigimos para no romper bookmarks.
+ */
+export default function ProfileLegacyPage() {
+  redirect(ROUTES.admin.account)
 }

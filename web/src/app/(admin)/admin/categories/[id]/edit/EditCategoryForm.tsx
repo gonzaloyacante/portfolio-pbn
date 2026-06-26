@@ -103,7 +103,6 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
             <CategoryCoverSelector
               categoryId={category.id}
               currentCoverUrl={category.coverImageUrl}
-              onSelect={undefined} // Controlled by internal hidden input
             />
           </div>
 
