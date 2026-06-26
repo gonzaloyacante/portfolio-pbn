@@ -4,7 +4,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { motion, OptimizedImage } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
-import { GripVertical, Star } from 'lucide-react'
+import { GripVertical, Star, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { GalleryImage } from './types'
 
@@ -16,11 +16,20 @@ interface SortableImageCardProps {
   image: GalleryImage
   index: number
   onToggleFeatured: (id: string, val: boolean) => void
+  onDelete: (id: string) => void
+  isDeleting?: boolean
 }
 
-export function SortableImageCard({ image, index, onToggleFeatured }: SortableImageCardProps) {
+export function SortableImageCard({
+  image,
+  index,
+  onToggleFeatured,
+  onDelete,
+  isDeleting = false,
+}: SortableImageCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: image.id,
+    disabled: isDeleting,
   })
 
   const style = {
@@ -38,24 +47,27 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
       layout
       initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.25 } }}
       transition={{ duration: 0.3, delay: Math.min(index * 0.025, 0.4) }}
       className={cn(
         'group bg-muted relative overflow-hidden rounded-2xl shadow-sm transition-shadow',
-        isDragging ? 'shadow-none' : 'hover:shadow-lg'
+        isDragging ? 'shadow-none' : 'hover:shadow-lg',
+        isDeleting && 'pointer-events-none'
       )}
     >
-      {/* Drag handle */}
+      {/* Drag handle — siempre visible (tenue sin hover, pleno en hover) */}
       <div
         {...attributes}
         {...listeners}
-        className="bg-foreground/50 absolute top-2 left-2 z-10 cursor-grab rounded-lg p-1.5 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+        className="bg-foreground/60 hover:bg-foreground/80 absolute top-2 left-2 z-10 cursor-grab rounded-lg p-1.5 opacity-70 backdrop-blur-sm transition-opacity hover:opacity-100 active:cursor-grabbing"
         aria-label={`Mover ${image.title}`}
+        title="Arrastrar para reordenar"
       >
         <GripVertical size={14} className="text-background" />
       </div>
 
-      {/* Featured toggle + position badge */}
-      <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+      {/* Acciones: destacada, posición, eliminar — siempre visibles */}
+      <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 opacity-80 transition-opacity group-hover:opacity-100">
         <button
           type="button"
           onClick={(e) => {
@@ -67,22 +79,28 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
             'flex h-6 w-6 items-center justify-center rounded-full backdrop-blur-sm transition-colors',
             image.isFeatured
               ? 'bg-warning text-warning-foreground'
-              : 'bg-foreground/50 text-background/70 hover:text-warning'
+              : 'bg-foreground/60 text-background/80 hover:text-warning'
           )}
         >
           <Star size={12} className={image.isFeatured ? 'fill-current' : ''} />
         </button>
-        <div className="bg-foreground/50 text-background rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onDelete(image.id)
+          }}
+          disabled={isDeleting}
+          title="Eliminar imagen"
+          aria-label={`Eliminar ${image.title}`}
+          className="bg-foreground/60 text-background/80 hover:bg-destructive hover:text-destructive-foreground flex h-6 w-6 items-center justify-center rounded-full backdrop-blur-sm transition-colors disabled:opacity-50"
+        >
+          <Trash2 size={12} />
+        </button>
+        <div className="bg-foreground/60 text-background rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm">
           #{index + 1}
         </div>
       </div>
-
-      {/* Featured indicator — always visible */}
-      {image.isFeatured && (
-        <div className="bg-warning absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full opacity-100 group-hover:opacity-0">
-          <Star size={12} className="text-warning-foreground fill-current" />
-        </div>
-      )}
 
       {/* Image */}
       <div className="relative w-full" style={{ paddingBottom: `${aspectRatio * 100}%` }}>
