@@ -215,6 +215,8 @@ migrate_working_dir/
 # AI TOOLS & AGENT CONFIGS (never commit)
 # ===================================================
 .sisyphus/
+# OhMyOpenCode agent temporary files (work plans, session state)
+.omo/
 # Neon CLI context (contains org ID)
 .neon
 # Kiro/Claude agent skills cache
