@@ -252,8 +252,8 @@
   height: var(--pbn-navbar-scrim-h);
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--foreground) var(--pbn-navbar-scrim-i), transparent) 0%,
-    color-mix(in srgb, var(--foreground) calc(var(--pbn-navbar-scrim-i) * 0.4), transparent) 41.67%,
+    color-mix(in srgb, var(--primary) var(--pbn-navbar-scrim-i), transparent) 0%,
+    color-mix(in srgb, var(--primary) calc(var(--pbn-navbar-scrim-i) * 0.4), transparent) 41.67%,
     transparent 100%
   );
 }
