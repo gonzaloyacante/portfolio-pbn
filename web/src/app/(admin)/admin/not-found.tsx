@@ -9,7 +9,7 @@ import { ROUTES } from '@/config/routes'
  */
 export default function AdminNotFound() {
   return (
-    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-6 px-4 text-center">
+    <div className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 px-4 text-center">
       <div className="animate-bounce text-6xl">🔍</div>
 
       <div className="space-y-3">

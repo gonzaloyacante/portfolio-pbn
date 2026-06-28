@@ -41,7 +41,7 @@ export function GoogleFontPickerModal({
 }: GoogleFontPickerModalProps) {
   return (
     <Modal isOpen={open} onClose={onClose} title="Galería de Fuentes" size="xl">
-      <div className="flex h-[70vh] flex-col space-y-6">
+      <div className="flex h-[70dvh] flex-col space-y-6">
         {/* Header Controls */}
         <div className="shrink-0 space-y-4">
           <div className="grid gap-4 md:grid-cols-2">

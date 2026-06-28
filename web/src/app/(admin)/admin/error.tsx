@@ -17,7 +17,7 @@ export default function AdminError({
   }, [error])
 
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6 text-center">
+    <div className="flex min-h-[50dvh] flex-col items-center justify-center gap-6 text-center">
       <div className="bg-destructive/10 rounded-card flex h-16 w-16 items-center justify-center">
         <AlertTriangle className="text-destructive h-8 w-8" />
       </div>

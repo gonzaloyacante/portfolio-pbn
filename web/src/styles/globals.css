@@ -247,7 +247,7 @@
    ============================================ */
 .pbn-navbar-scrim {
   /* Por defecto: mobile */
-  --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-mobile, 45vh);
+  --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-mobile, 45dvh);
   --pbn-navbar-scrim-i: var(--pbn-navbar-scrim-i-mobile, 80%);
   height: var(--pbn-navbar-scrim-h);
   background: linear-gradient(
@@ -261,7 +261,7 @@
 /* Tablet: 768px – 1023.98px */
 @media (min-width: 768px) and (max-width: 1023.98px) {
   .pbn-navbar-scrim {
-    --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-tablet, 45vh);
+    --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-tablet, 45dvh);
     --pbn-navbar-scrim-i: var(--pbn-navbar-scrim-i-tablet, 80%);
   }
 }
@@ -269,7 +269,7 @@
 /* Desktop: 1024px+ */
 @media (min-width: 1024px) {
   .pbn-navbar-scrim {
-    --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-desktop, 45vh);
+    --pbn-navbar-scrim-h: var(--pbn-navbar-scrim-h-desktop, 45dvh);
     --pbn-navbar-scrim-i: var(--pbn-navbar-scrim-i-desktop, 80%);
   }
 }
