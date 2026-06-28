@@ -49,7 +49,7 @@ export default function DurationField({ service }: DurationFieldProps) {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-(--foreground) opacity-90">Duración</label>
+      <label className="text-foreground block text-sm font-medium opacity-90">Duración</label>
 
       <div className="mt-2">
         <div className="flex flex-wrap gap-2">
@@ -60,7 +60,7 @@ export default function DurationField({ service }: DurationFieldProps) {
                 key={m}
                 type="button"
                 onClick={() => setText(formatDuration(m))}
-                className={`rounded-full border px-3 py-1 text-sm transition-colors ${isSelected ? 'bg-(--primary) text-white' : 'bg-muted/10 hover:bg-muted/20 text-(--foreground)'}`}
+                className={`rounded-full border px-3 py-1 text-sm transition-colors ${isSelected ? 'bg-primary text-white' : 'bg-muted/10 text-foreground hover:bg-muted/20'}`}
               >
                 {formatDuration(m)}
               </button>
@@ -79,7 +79,7 @@ export default function DurationField({ service }: DurationFieldProps) {
           />
 
           {currentMinutes !== null && (
-            <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-(--muted-foreground)">
+            <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
               = {currentMinutes} min
             </span>
           )}
