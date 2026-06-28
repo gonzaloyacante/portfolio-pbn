@@ -44,6 +44,7 @@ const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  viewportFit: 'cover',
   /* theme-color: solo <meta> en <head> (BD + BRAND) — evita duplicar con viewport export */
 }
 

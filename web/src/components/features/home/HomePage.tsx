@@ -32,7 +32,7 @@ export default async function HomePage() {
     >
       <BackdropMedia
         settings={homeSettings}
-        className="public-home-page-background pointer-events-none absolute inset-x-0 top-0 h-[100svh]"
+        className="public-home-page-background pointer-events-none absolute inset-x-0 top-0 h-[100dvh]"
       />
 
       <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-between">
