@@ -83,7 +83,7 @@ export default function WorldMap({
         </div>
       ) : null}
 
-      <div className="h-[min(420px,55vh)] min-h-[280px] w-full">
+      <div className="h-[min(420px,55dvh)] min-h-[280px] w-full">
         <Map
           center={DEFAULT_CENTER}
           zoom={DEFAULT_ZOOM}

@@ -161,11 +161,11 @@ export default function Navbar({
           style={{
             // Las 9 CSS vars (3 valores × 3 atributos) — el CSS elige cuál usar.
             // Fallback a defaults específicos por viewport en globals.css.
-            ['--pbn-navbar-scrim-h-mobile' as string]: `${navbarScrimMobileHeightVh}vh`,
+            ['--pbn-navbar-scrim-h-mobile' as string]: `${navbarScrimMobileHeightVh}dvh`,
             ['--pbn-navbar-scrim-i-mobile' as string]: `${navbarScrimMobileIntensity}%`,
-            ['--pbn-navbar-scrim-h-tablet' as string]: `${navbarScrimTabletHeightVh}vh`,
+            ['--pbn-navbar-scrim-h-tablet' as string]: `${navbarScrimTabletHeightVh}dvh`,
             ['--pbn-navbar-scrim-i-tablet' as string]: `${navbarScrimTabletIntensity}%`,
-            ['--pbn-navbar-scrim-h-desktop' as string]: `${navbarScrimHeightVh}vh`,
+            ['--pbn-navbar-scrim-h-desktop' as string]: `${navbarScrimHeightVh}dvh`,
             ['--pbn-navbar-scrim-i-desktop' as string]: `${navbarScrimIntensity}%`,
             opacity: scrimOpacity,
           }}
