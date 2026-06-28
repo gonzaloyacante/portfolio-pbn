@@ -173,7 +173,7 @@ export function HeroContent({
           'public-home-hero relative z-10 w-full overflow-x-hidden transition-colors duration-500',
           isEditor
             ? 'h-full min-h-0'
-            : 'min-h-[100svh] px-4 pb-16 sm:px-8 md:min-h-[100dvh] lg:px-16 lg:pb-0'
+            : 'min-h-[100svh] px-4 pb-[calc(4rem+env(safe-area-inset-bottom))] sm:px-8 md:min-h-[100dvh] lg:px-16 lg:pb-0'
         )}
       >
         {tint && (
