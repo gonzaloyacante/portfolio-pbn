@@ -64,7 +64,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
     return (
       <div ref={wrapperRef} className={cn('w-full', containerClassName)}>
         {label && (
-          <label className="mb-2 block text-sm font-semibold text-(--foreground)">
+          <label className="text-foreground mb-2 block text-sm font-semibold">
             {label}
             {required && <span className="text-destructive ml-1">*</span>}
           </label>
@@ -84,30 +84,29 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
             onFocus: () => setFocused(true),
             onBlur: () => setFocused(false),
             className: cn(
-              'w-full flex-1 !rounded-r-xl !border-2 !border-l-0 !border-(--primary)/20 !bg-(--background) !px-4 !py-3 !text-base !text-(--foreground) transition-all focus:!border-(--primary) focus:!ring-2 focus:!ring-(--primary)/20 focus:!outline-none placeholder:!text-(--foreground)/40 disabled:!cursor-not-allowed disabled:!opacity-50'
+              'border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 w-full flex-1 rounded-r-xl border-2 border-l-0 px-4 py-3 text-base transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
             ),
           }}
           countrySelectorStyleProps={{
             buttonClassName: cn(
-              '!rounded-l-xl !border-2 !border-r-0 !bg-(--background) !px-3 !py-3 transition-all hover:!bg-(--primary)/5 focus:!outline-none !h-auto',
-              focused ? '!border-(--primary)' : '!border-(--primary)/20'
+              'border-input bg-background hover:bg-primary/5 focus:outline-none h-auto rounded-l-xl border-2 border-r-0 px-3 py-3 transition-all',
+              focused ? 'border-primary' : 'border-primary/20'
             ),
             dropdownStyleProps: {
               style: { width: dropdownWidth, maxHeight: '300px' },
-              className:
-                '!rounded-xl !border !border-(--primary)/20 !bg-(--card) !shadow-xl !text-(--foreground)',
+              className: 'border-border bg-card text-foreground rounded-xl border shadow-xl',
               listItemStyle: { fontSize: '0.95rem', minHeight: '40px' },
-              listItemClassName: '!text-(--foreground) hover:!bg-muted/80 !transition-colors',
-              listItemSelectedClassName: '!bg-(--primary)/10 !text-(--primary)',
-              listItemFocusedClassName: '!bg-muted/80',
+              listItemClassName: 'text-foreground hover:bg-muted/80 transition-colors',
+              listItemSelectedClassName: 'bg-primary/10 text-primary',
+              listItemFocusedClassName: 'bg-muted/80',
               listItemFlagStyle: { fontSize: '1.3rem', marginRight: '10px' },
-              listItemDialCodeClassName: '!text-(--foreground)/60',
+              listItemDialCodeClassName: 'text-muted-foreground',
             },
           }}
           dialCodePreviewStyleProps={{
             className: cn(
-              '!border-y-2 !border-x-0 !bg-(--background) !px-2 !text-base !text-(--foreground) transition-all',
-              focused ? '!border-(--primary)' : '!border-(--primary)/20'
+              'border-input bg-background text-foreground border-y-2 border-x-0 px-2 text-base transition-all',
+              focused ? 'border-primary' : 'border-primary/20'
             ),
           }}
           className={cn('flex w-full', className)}

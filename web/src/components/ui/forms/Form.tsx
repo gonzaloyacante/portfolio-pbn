@@ -37,8 +37,4 @@ const FormMessage = React.forwardRef<
 })
 FormMessage.displayName = 'FormMessage'
 
-// Placeholder for full FormField implementation if needed,
-// for now exposing the basic label/message parts used in refactor
-const FormField = ({ children }: { children: React.ReactNode }) => <>{children}</>
-
-export { FormLabel, FormMessage, FormField }
+export { FormLabel, FormMessage }

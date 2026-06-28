@@ -21,7 +21,30 @@ export default async function TemaPage() {
         title="🎨 Editor de Tema"
         description="Personaliza el diseño y la tipografía de tu portfolio"
       />
-      <Suspense fallback={<div>Cargando configuración de tema...</div>}>
+      <Suspense
+        fallback={
+          <div
+            role="status"
+            aria-live="polite"
+            aria-label="Cargando configuración de tema"
+            className="space-y-6"
+          >
+            <div className="bg-muted h-10 w-64 animate-pulse rounded-lg" />
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <div className="bg-card border-border space-y-4 rounded-2xl border p-6 shadow-sm">
+                <div className="bg-muted h-6 w-40 animate-pulse rounded" />
+                <div className="bg-muted h-32 animate-pulse rounded-lg" />
+                <div className="bg-muted h-10 animate-pulse rounded" />
+              </div>
+              <div className="bg-card border-border space-y-4 rounded-2xl border p-6 shadow-sm">
+                <div className="bg-muted h-6 w-40 animate-pulse rounded" />
+                <div className="bg-muted h-32 animate-pulse rounded-lg" />
+                <div className="bg-muted h-10 animate-pulse rounded" />
+              </div>
+            </div>
+          </div>
+        }
+      >
         <ThemeEditor initialData={settings} initialColorOverrides={colorOverrides} />
       </Suspense>
     </div>

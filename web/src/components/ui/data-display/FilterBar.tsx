@@ -80,9 +80,9 @@ export default function FilterBar(props: FilterBarProps) {
               size="sm"
               onClick={() => onSearchChange('')}
               aria-label="Limpiar búsqueda"
-              className="text-muted-foreground hover:text-foreground absolute top-1/2 right-1 -translate-y-1/2"
+              className="text-muted-foreground hover:text-foreground absolute top-1/2 right-1 flex min-h-[44px] min-w-[44px] -translate-y-1/2 items-center justify-center"
             >
-              <X size={16} />
+              <X size={16} aria-hidden="true" />
             </Button>
           )}
         </div>

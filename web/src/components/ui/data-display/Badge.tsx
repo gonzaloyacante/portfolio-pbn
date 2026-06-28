@@ -2,7 +2,15 @@ import { clsx } from 'clsx'
 
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode
-  variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'destructive' | 'outline'
+  variant?:
+    | 'default'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'info'
+    | 'destructive'
+    | 'outline'
   size?: 'sm' | 'md'
   className?: string
 }
@@ -25,8 +33,6 @@ export default function Badge({
     outline: 'text-foreground border-border',
     success: 'bg-success/15 text-success dark:text-success border-success/20',
     warning: 'bg-warning/15 text-warning dark:text-warning border-warning/20',
-    purple: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200', // Kept for legacy compatibility if needed
-    pink: 'bg-secondary/50 text-secondary-foreground border-secondary/20',
     info: 'bg-info/15 text-info dark:text-info border-info/20',
   }
 

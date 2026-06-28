@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui'
-import { LayoutDashboard } from 'lucide-react'
+import { LayoutDashboard, SearchX } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
 
 /**
@@ -9,8 +9,11 @@ import { ROUTES } from '@/config/routes'
  */
 export default function AdminNotFound() {
   return (
-    <div className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 px-4 text-center">
-      <div className="animate-bounce text-6xl">🔍</div>
+    <div
+      role="alert"
+      className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 px-4 text-center"
+    >
+      <SearchX className="text-muted-foreground h-20 w-20" strokeWidth={1.2} aria-hidden="true" />
 
       <div className="space-y-3">
         <h1 className="text-primary text-5xl font-bold">404</h1>
@@ -26,7 +29,7 @@ export default function AdminNotFound() {
           className="rounded-xl px-6 py-3 font-bold shadow-lg hover:scale-105 active:scale-95"
         >
           <Link href={ROUTES.admin.dashboard}>
-            <LayoutDashboard className="h-5 w-5" />
+            <LayoutDashboard className="h-5 w-5" aria-hidden="true" />
             Ir al Dashboard
           </Link>
         </Button>

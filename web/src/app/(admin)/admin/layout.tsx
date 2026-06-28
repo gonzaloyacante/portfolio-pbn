@@ -6,9 +6,6 @@ import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminMobileHeader from '@/components/layout/AdminMobileHeader'
 import PageTransition from '@/components/layout/PageTransition'
 import AdminProviders from '@/components/providers/AdminProviders'
-// Importado para que las clases .public-home-page y .public-home-page-background
-// (donde se aplica el background-image del Hero) funcionen también dentro del
-// editor /admin/inicio. Es la misma hoja que usa la home pública.
 import '@/app/(public)/public-fixed-theme.css'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -27,11 +24,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           público (fondo rosado). Si querés un theme admin separado, hay que
           mover las vars a un bloque `:root` o un wrapper admin-específico. */}
       <div className="public-fixed-theme bg-background flex min-h-dvh flex-col transition-colors duration-300 lg:flex-row">
+        <a
+          href="#admin-main-content"
+          className="bg-primary text-primary-foreground sr-only z-200 rounded px-4 py-2 text-sm font-semibold focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:ring-2 focus:ring-white focus:outline-none"
+        >
+          Saltar al contenido principal
+        </a>
         {/* Sidebar desktop (hidden en mobile, visible en lg+) */}
         <AdminSidebar />
         {/* Header mobile con hamburger (visible solo en mobile) */}
         <AdminMobileHeader />
-        <main className="flex-1 overflow-auto p-4 transition-colors duration-300 sm:p-6 lg:p-8">
+        <main
+          id="admin-main-content"
+          className="flex-1 overflow-auto p-4 transition-colors duration-300 sm:p-6 lg:p-8"
+          tabIndex={-1}
+        >
           <PageTransition>{children}</PageTransition>
         </main>
       </div>

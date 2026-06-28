@@ -199,7 +199,7 @@ export default function TestimonialForm() {
           required
           rows={4}
           placeholder="Cuéntanos tu experiencia trabajando con Paola..."
-          helperText="Entre 20 y 500 caracteres"
+          helpText="Entre 20 y 500 caracteres"
           className={publicFieldClass}
         />
       </div>

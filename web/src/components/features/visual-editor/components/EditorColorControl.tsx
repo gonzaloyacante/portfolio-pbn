@@ -29,12 +29,13 @@ export function EditorColorControl({ label, value, onChange }: EditorColorContro
             />
           ) : (
             <div
-              className="pointer-events-none absolute inset-0"
+              className="bg-muted pointer-events-none absolute inset-0"
               style={{
                 backgroundImage:
-                  'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)',
+                  'linear-gradient(45deg, var(--muted-foreground) 25%, transparent 25%), linear-gradient(-45deg, var(--muted-foreground) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--muted-foreground) 75%), linear-gradient(-45deg, transparent 75%, var(--muted-foreground) 75%)',
                 backgroundSize: '10px 10px',
                 backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px',
+                opacity: 0.3,
               }}
             />
           )}

@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, TextareaHTMLAttributes } from 'react'
+import { InputHTMLAttributes, TextareaHTMLAttributes, useId } from 'react'
 
 interface FormFieldProps extends InputHTMLAttributes<
   HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -9,7 +9,7 @@ interface FormFieldProps extends InputHTMLAttributes<
   rows?: number
   options?: { value: string; label: string }[]
   className?: string
-  // Extend standard props
+  required?: boolean
 }
 
 export default function FormField({
@@ -19,26 +19,50 @@ export default function FormField({
   rows = 4,
   options,
   className = '',
+  required,
   ...props
 }: FormFieldProps) {
+  const reactId = useId()
+  const inputId = props.id ?? `field-${name}-${reactId}`
+  const labelId = `${inputId}-label`
+
   const baseClasses =
     'mt-1 block w-full rounded-md border border-input p-2 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-background text-foreground'
 
+  const a11yProps = {
+    id: inputId,
+    name,
+    required,
+    'aria-labelledby': labelId,
+    'aria-required': required || undefined,
+  }
+
   return (
     <div className={className}>
-      <label className="block text-sm font-medium text-(--foreground) opacity-90">{label}</label>
+      <label
+        id={labelId}
+        htmlFor={inputId}
+        className="text-foreground block text-sm font-medium opacity-90"
+      >
+        {label}
+        {required && (
+          <span className="text-destructive ml-1" aria-hidden="true">
+            *
+          </span>
+        )}
+      </label>
 
       {type === 'textarea' ? (
         <textarea
-          name={name}
           rows={rows}
           className={baseClasses}
+          {...a11yProps}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       ) : type === 'select' && options ? (
         <select
-          name={name}
           className={baseClasses}
+          {...a11yProps}
           {...(props as InputHTMLAttributes<HTMLSelectElement>)}
         >
           {options.map((opt) => (
@@ -50,8 +74,8 @@ export default function FormField({
       ) : (
         <input
           type={type}
-          name={name}
           className={baseClasses}
+          {...a11yProps}
           {...(props as InputHTMLAttributes<HTMLInputElement>)}
         />
       )}

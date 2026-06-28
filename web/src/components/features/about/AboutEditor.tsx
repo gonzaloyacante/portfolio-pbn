@@ -417,7 +417,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
                   }
                   onBlur={field.onBlur}
                   rows={4}
-                  helperText="Ej: Maquillaje social, FX, Caracterización"
+                  helpText="Ej: Maquillaje social, FX, Caracterización"
                 />
               )}
             />
@@ -439,7 +439,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
                   }
                   onBlur={field.onBlur}
                   rows={4}
-                  helperText="Ej: Master en Maquillaje 2023, Curso FX Avanzado"
+                  helpText="Ej: Master en Maquillaje 2023, Curso FX Avanzado"
                 />
               )}
             />

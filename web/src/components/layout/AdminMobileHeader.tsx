@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { Menu, X, Globe, LogOut } from 'lucide-react'
 import { showToast } from '@/lib/toast'
-// import ThemeToggle from '@/components/layout/ThemeToggle'
 import { menuItems, type SidebarItem } from '@/config/admin-sidebar'
 import { ROUTES } from '@/config/routes'
 
@@ -62,11 +61,6 @@ export default function AdminMobileHeader() {
           Admin Panel
         </Link>
 
-        {/*
-          Modo oscuro deshabilitado temporalmente.
-          Reactivar cuando bug esté resuelto:
-          <ThemeToggle />
-        */}
         <span className="h-9 w-9" aria-hidden="true" />
       </header>
 
@@ -79,12 +73,10 @@ export default function AdminMobileHeader() {
         />
       )}
 
-      {/* Drawer */}
+      {/* Drawer (navigation landmark, NOT a dialog) */}
       <nav
         id="admin-mobile-nav"
-        role="dialog"
         aria-label="Menú de navegación admin"
-        aria-modal="true"
         className={`bg-card border-border fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
@@ -99,17 +91,18 @@ export default function AdminMobileHeader() {
             Admin Panel
           </Link>
           <button
+            type="button"
             onClick={() => setIsOpen(false)}
             aria-label="Cerrar menú"
             className="text-muted-foreground hover:bg-accent rounded-lg p-2 transition-colors duration-200"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
         {/* Items de navegación */}
         <div className="flex-1 overflow-y-auto p-4">
-          <ul className="space-y-1" role="list">
+          <ul className="space-y-1">
             {menuItems.map((item: SidebarItem) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
               const IconComponent = item.icon
@@ -118,6 +111,7 @@ export default function AdminMobileHeader() {
                   <Link
                     href={item.href}
                     prefetch={false}
+                    aria-current={isActive ? 'page' : undefined}
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 active:scale-[0.98] ${
                       isActive
@@ -125,10 +119,17 @@ export default function AdminMobileHeader() {
                         : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     }`}
                   >
-                    <IconComponent size={18} strokeWidth={isActive ? 2.5 : 1.8} />
+                    <IconComponent
+                      size={18}
+                      strokeWidth={isActive ? 2.5 : 1.8}
+                      aria-hidden="true"
+                    />
                     <span className="font-medium">{item.label}</span>
                     {isActive && (
-                      <span className="ml-auto h-2 w-2 rounded-full bg-current opacity-50" />
+                      <span
+                        className="ml-auto h-2 w-2 rounded-full bg-current opacity-50"
+                        aria-hidden="true"
+                      />
                     )}
                   </Link>
                 </li>
@@ -143,17 +144,20 @@ export default function AdminMobileHeader() {
             href={ROUTES.home}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Ver sitio público (se abre en una pestaña nueva)"
             onClick={() => setIsOpen(false)}
             className="text-muted-foreground hover:bg-accent hover:text-accent-foreground mb-2 flex w-full items-center gap-3 rounded-lg px-4 py-2 text-sm transition-all duration-200"
           >
-            <Globe size={16} />
+            <Globe size={16} aria-hidden="true" />
             <span>Ver sitio público</span>
           </Link>
           <button
+            type="button"
             onClick={handleSignOut}
+            aria-label="Cerrar sesión"
             className="text-destructive hover:bg-destructive/10 flex w-full items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200"
           >
-            <LogOut size={18} />
+            <LogOut size={18} aria-hidden="true" />
             <span className="font-medium">Cerrar Sesión</span>
           </button>
         </div>

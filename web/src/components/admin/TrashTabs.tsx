@@ -149,8 +149,9 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
               variant="secondary"
               size="sm"
               className="gap-2"
+              aria-label={`Restaurar ${title}`}
             >
-              <RotateCcw size={14} />
+              <RotateCcw size={14} aria-hidden="true" />
               Restaurar
             </Button>
             <Button
@@ -160,12 +161,13 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
               variant="destructive"
               size="sm"
               className="gap-2"
+              aria-label={`Eliminar permanentemente ${title}`}
             >
-              <Trash2 size={14} />
+              <Trash2 size={14} aria-hidden="true" />
               Eliminar
             </Button>
             <div className="text-destructive mt-2 ml-auto text-xs font-medium md:hidden">
-              ⏰ {daysRemaining} días
+              <span aria-hidden="true">⏰</span> {daysRemaining} días
             </div>
           </div>
         </div>
