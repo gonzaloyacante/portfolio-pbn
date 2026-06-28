@@ -80,8 +80,13 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
             Haz clic en cualquier elemento para editarlo
           </p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} size="lg">
-          <Save className="mr-2 h-4 w-4" />
+        <Button
+          onClick={handleSave}
+          disabled={isSaving || !isDirty}
+          size="lg"
+          aria-disabled={isSaving || !isDirty}
+        >
+          <Save className="mr-2 h-4 w-4" aria-hidden="true" />
           {isSaving ? 'Guardando...' : 'Guardar Cambios'}
         </Button>
       </div>

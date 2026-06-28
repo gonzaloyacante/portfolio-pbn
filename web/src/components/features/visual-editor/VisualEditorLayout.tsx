@@ -122,20 +122,22 @@ export function VisualEditorLayout({
             <div className="flex items-center gap-1 rounded-lg border p-1">
               {(Object.keys(VIEWPORT_CONFIGS) as ViewportMode[]).map((mode) => {
                 const Icon = VIEWPORT_ICONS[mode]
+                const isActive = viewportMode === mode
                 return (
                   <button
                     key={mode}
                     type="button"
                     onClick={() => onViewportChange(mode)}
+                    aria-pressed={isActive}
+                    aria-label={`Vista ${VIEWPORT_CONFIGS[mode].label}`}
                     className={cn(
                       'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all',
-                      viewportMode === mode
+                      isActive
                         ? 'bg-primary text-primary-foreground shadow-sm'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     )}
-                    title={VIEWPORT_CONFIGS[mode].label}
                   >
-                    <Icon className="h-3.5 w-3.5" />
+                    <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                     <span className="hidden sm:inline">{VIEWPORT_CONFIGS[mode].label}</span>
                   </button>
                 )
@@ -148,6 +150,8 @@ export function VisualEditorLayout({
                 type="button"
                 disabled={isLandscapeDisabled}
                 onClick={() => onOrientationChange('landscape')}
+                aria-pressed={orientation === 'landscape'}
+                aria-label="Orientación horizontal"
                 className={cn(
                   'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all',
                   orientation === 'landscape'
@@ -156,15 +160,16 @@ export function VisualEditorLayout({
                   isLandscapeDisabled &&
                     'hover:text-muted-foreground cursor-not-allowed opacity-50 hover:bg-transparent'
                 )}
-                title="Horizontal"
               >
-                <RectangleHorizontal className="h-3.5 w-3.5" />
+                <RectangleHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="hidden sm:inline">Horizontal</span>
               </button>
               <button
                 type="button"
                 disabled={isPortraitDisabled}
                 onClick={() => onOrientationChange('portrait')}
+                aria-pressed={orientation === 'portrait'}
+                aria-label="Orientación vertical"
                 className={cn(
                   'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all',
                   orientation === 'portrait'
@@ -173,9 +178,8 @@ export function VisualEditorLayout({
                   isPortraitDisabled &&
                     'hover:text-muted-foreground cursor-not-allowed opacity-50 hover:bg-transparent'
                 )}
-                title="Vertical"
               >
-                <RectangleVertical className="h-3.5 w-3.5" />
+                <RectangleVertical className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="hidden sm:inline">Vertical</span>
               </button>
             </div>
