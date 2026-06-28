@@ -109,9 +109,47 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
                                     ),
                                     if (detail.phone != null) ...[
                                       const SizedBox(height: 4),
-                                      Text(
-                                        detail.phone!,
-                                        style: theme.textTheme.bodySmall,
+                                      Row(
+                                        children: [
+                                          if (detail.countryCode != null &&
+                                              detail
+                                                  .countryCode!
+                                                  .isNotEmpty) ...[
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: theme
+                                                    .colorScheme
+                                                    .secondaryContainer,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                detail.countryCode!,
+                                                style: theme
+                                                    .textTheme
+                                                    .labelSmall
+                                                    ?.copyWith(
+                                                      fontFamily: 'monospace',
+                                                      color: theme
+                                                          .colorScheme
+                                                          .onSecondaryContainer,
+                                                    ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                          Expanded(
+                                            child: Text(
+                                              detail.phone!,
+                                              style: theme.textTheme.bodySmall,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                     if (detail.instagramUser != null) ...[

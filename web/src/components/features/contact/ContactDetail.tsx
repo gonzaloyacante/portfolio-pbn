@@ -55,17 +55,27 @@ export function ContactDetail({
           </div>
           {contact.phone && (
             <div className="mt-1 flex items-center gap-2">
+              {contact.countryCode && (
+                <span className="bg-secondary text-secondary-foreground rounded-md px-1.5 py-0.5 font-mono text-xs">
+                  {contact.countryCode}
+                </span>
+              )}
               <a
-                href={`tel:${contact.phone.replace(/\s+/g, '')}`}
+                href={`tel:${(contact.countryCode ?? '') + contact.phone.replace(/\s+/g, '')}`}
                 className="text-muted-foreground text-sm hover:underline"
               >
                 {contact.phone}
               </a>
               <button
                 type="button"
-                onClick={() => onCopy(contact.phone!, 'phone')}
-                title="Copiar teléfono"
-                aria-label="Copiar teléfono"
+                onClick={() => {
+                  const fullPhone = contact.countryCode
+                    ? `${contact.countryCode} ${contact.phone}`
+                    : contact.phone!
+                  onCopy(fullPhone, 'phone')
+                }}
+                title="Copiar teléfono con código de país"
+                aria-label="Copiar teléfono con código de país"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {copiedField === 'phone' ? (

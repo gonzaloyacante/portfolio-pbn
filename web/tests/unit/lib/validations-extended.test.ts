@@ -93,6 +93,7 @@ describe('contactFormSchema — extended', () => {
       ...validContact,
       responsePreference: 'PHONE',
       phone: '+34 600 123 456',
+      countryCode: '+34',
     })
     expect(result.success).toBe(true)
   })
@@ -102,6 +103,7 @@ describe('contactFormSchema — extended', () => {
       ...validContact,
       responsePreference: 'WHATSAPP',
       phone: '+34 600 123 456',
+      countryCode: '+34',
     })
     expect(result.success).toBe(true)
   })

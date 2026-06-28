@@ -28,6 +28,13 @@ export interface PhoneInputProps {
   value?: string
   defaultCountry?: string
   onChange?: (value: string) => void
+  /**
+   * Se invoca cada vez que cambia el país seleccionado en el dropdown,
+   * INCLUIDO el inicial al montar el componente (con el país por defecto).
+   * El argumento es el dial code SIN el "+" (ej: "34", "54", "1").
+   * El consumidor debe normalizarlo a "+34" antes de guardarlo si lo necesita.
+   */
+  onCountryChange?: (dialCode: string) => void
 }
 
 export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
@@ -41,6 +48,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
       value,
       defaultCountry = 'es',
       onChange,
+      onCountryChange,
     },
     _ref
   ) => {
@@ -64,9 +72,9 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
     return (
       <div ref={wrapperRef} className={cn('w-full', containerClassName)}>
         {label && (
-          <label className="text-foreground mb-2 block text-sm font-semibold">
+          <label className="public-contact-form-label mb-2 block text-sm font-semibold">
             {label}
-            {required && <span className="text-destructive ml-1">*</span>}
+            {required && <span className="public-contact-error ml-1">*</span>}
           </label>
         )}
         <ReactInternationalPhone
@@ -77,6 +85,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
           onChange={(phone, meta) => {
             setCurrentCountry(meta.country)
             onChange?.(phone)
+            onCountryChange?.(meta.country.dialCode)
           }}
           inputProps={{
             required,
@@ -84,35 +93,36 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
             onFocus: () => setFocused(true),
             onBlur: () => setFocused(false),
             className: cn(
-              'border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 w-full flex-1 rounded-r-xl border-2 border-l-0 px-4 py-3 text-base transition-all focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+              'w-full flex-1 !rounded-r-xl !border !border-l-0 !border-[var(--public-contact-field-border)] !bg-[var(--public-contact-field-bg)] !px-4 !py-3 !text-base !text-[var(--public-contact-field-text)] transition-all focus:!border-[var(--public-contact-field-border)] focus:!outline-none placeholder:!text-[var(--public-contact-field-placeholder)] disabled:!cursor-not-allowed disabled:!opacity-50'
             ),
           }}
           countrySelectorStyleProps={{
             buttonClassName: cn(
-              'border-input bg-background hover:bg-primary/5 focus:outline-none h-auto rounded-l-xl border-2 border-r-0 px-3 py-3 transition-all',
-              focused ? 'border-primary' : 'border-primary/20'
+              '!rounded-l-xl !border !border-r-0 !border-[var(--public-contact-field-border)] !bg-[var(--public-contact-field-bg)] !px-3 !py-3 transition-all hover:!bg-[var(--public-contact-option-active-bg)] focus:!outline-none !h-auto'
             ),
             dropdownStyleProps: {
               style: { width: dropdownWidth, maxHeight: '300px' },
-              className: 'border-border bg-card text-foreground rounded-xl border shadow-xl',
+              className:
+                '!rounded-xl !border !border-[var(--public-contact-field-border)] !bg-[var(--public-contact-field-bg)] !shadow-xl !text-[var(--public-contact-field-text)]',
               listItemStyle: { fontSize: '0.95rem', minHeight: '40px' },
-              listItemClassName: 'text-foreground hover:bg-muted/80 transition-colors',
-              listItemSelectedClassName: 'bg-primary/10 text-primary',
-              listItemFocusedClassName: 'bg-muted/80',
+              listItemClassName:
+                '!text-[var(--public-contact-field-text)] hover:!bg-[var(--public-contact-option-active-bg)] !transition-colors',
+              listItemSelectedClassName:
+                '!bg-[var(--public-contact-option-active-bg)] !text-[var(--public-contact-option-active-text)]',
+              listItemFocusedClassName: '!bg-[var(--public-contact-option-active-bg)]',
               listItemFlagStyle: { fontSize: '1.3rem', marginRight: '10px' },
-              listItemDialCodeClassName: 'text-muted-foreground',
+              listItemDialCodeClassName: '!text-[var(--public-contact-field-placeholder)]',
             },
           }}
           dialCodePreviewStyleProps={{
             className: cn(
-              'border-input bg-background text-foreground border-y-2 border-x-0 px-2 text-base transition-all',
-              focused ? 'border-primary' : 'border-primary/20'
+              '!border-y !border-x-0 !border-[var(--public-contact-field-border)] !bg-[var(--public-contact-field-bg)] !px-2 !text-base !text-[var(--public-contact-field-text)] transition-all'
             ),
           }}
           className={cn('flex w-full', className)}
         />
         {error && typeof error === 'string' && (
-          <p className="text-destructive mt-1 text-sm">{error}</p>
+          <p className="public-contact-error mt-1 text-sm">{error}</p>
         )}
       </div>
     )

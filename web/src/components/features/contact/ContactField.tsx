@@ -1,19 +1,28 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { Controller, useForm, type UseFormSetValue } from 'react-hook-form'
 import { type ContactFormData } from '@/lib/validations'
+import { PhoneInput } from '@/components/ui'
 
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP' | 'INSTAGRAM'
 
 interface ContactFieldProps {
   preference: ResponsePreference
   register: ReturnType<typeof useForm<ContactFormData>>['register']
+  control: ReturnType<typeof useForm<ContactFormData>>['control']
+  setValue: UseFormSetValue<ContactFormData>
   errors: ReturnType<typeof useForm<ContactFormData>>['formState']['errors']
 }
 
 const inputClass = 'public-contact-field w-full rounded-xl px-4 py-3 transition-all'
 
-export function ContactField({ preference, register, errors }: ContactFieldProps) {
+export function ContactField({
+  preference,
+  register,
+  control,
+  setValue,
+  errors,
+}: ContactFieldProps) {
   if (preference === 'INSTAGRAM') {
     return (
       <div>
@@ -39,26 +48,32 @@ export function ContactField({ preference, register, errors }: ContactFieldProps
 
   if (preference === 'WHATSAPP' || preference === 'PHONE') {
     return (
-      <div>
-        <label
-          htmlFor="phone"
-          className="public-contact-form-label mb-2 block text-sm font-semibold"
-        >
-          Tu teléfono *
-        </label>
-        <input
-          {...register('phone')}
-          type="tel"
-          inputMode="tel"
-          id="phone"
-          className={inputClass}
-          placeholder="+34 612 345 678"
-          autoComplete="tel"
-        />
-        {errors.phone && (
-          <p className="public-contact-error mt-1 text-sm">{errors.phone.message}</p>
+      <Controller
+        name="phone"
+        control={control}
+        render={({ field }) => (
+          <div className="space-y-1">
+            <PhoneInput
+              label="Tu teléfono *"
+              value={field.value || ''}
+              onChange={field.onChange}
+              onCountryChange={(dialCode) => {
+                // La librería emite el dialCode SIN el "+" (ej: "34").
+                // Lo normalizamos a "+34" antes de setearlo en el form
+                // para que Zod (/^\+\d{1,4}$/) acepte.
+                const normalized = dialCode?.startsWith('+') ? dialCode : `+${dialCode}`
+                setValue('countryCode', normalized, { shouldValidate: true, shouldDirty: true })
+              }}
+            />
+            {errors.phone && (
+              <p className="public-contact-error mt-1 text-sm">{errors.phone?.message}</p>
+            )}
+            {errors.countryCode && (
+              <p className="public-contact-error mt-1 text-sm">{errors.countryCode.message}</p>
+            )}
+          </div>
         )}
-      </div>
+      />
     )
   }
 

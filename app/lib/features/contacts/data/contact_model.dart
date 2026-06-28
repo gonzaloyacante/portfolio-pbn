@@ -36,6 +36,7 @@ abstract class ContactDetail with _$ContactDetail {
     required String name,
     required String email,
     String? phone,
+    String? countryCode,
     String? instagramUser,
     required String message,
     String? subject,

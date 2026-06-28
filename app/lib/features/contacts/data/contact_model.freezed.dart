@@ -320,7 +320,7 @@ as DateTime,
 /// @nodoc
 mixin _$ContactDetail {
 
- String get id; String get name; String get email; String? get phone; String? get instagramUser; String get message; String? get subject; String get responsePreference; String get status; String get priority; bool get isRead; DateTime? get readAt; bool get isImportant; String? get adminNote; List<String> get tags; String? get ipAddress; String? get referrer; String? get utmSource; String? get utmMedium; String? get utmCampaign; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get name; String get email; String? get phone; String? get countryCode; String? get instagramUser; String get message; String? get subject; String get responsePreference; String get status; String get priority; bool get isRead; DateTime? get readAt; bool get isImportant; String? get adminNote; List<String> get tags; String? get ipAddress; String? get referrer; String? get utmSource; String? get utmMedium; String? get utmCampaign; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of ContactDetail
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -333,16 +333,16 @@ $ContactDetailCopyWith<ContactDetail> get copyWith => _$ContactDetailCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ContactDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.instagramUser, instagramUser) || other.instagramUser == instagramUser)&&(identical(other.message, message) || other.message == message)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.responsePreference, responsePreference) || other.responsePreference == responsePreference)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.isImportant, isImportant) || other.isImportant == isImportant)&&(identical(other.adminNote, adminNote) || other.adminNote == adminNote)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.referrer, referrer) || other.referrer == referrer)&&(identical(other.utmSource, utmSource) || other.utmSource == utmSource)&&(identical(other.utmMedium, utmMedium) || other.utmMedium == utmMedium)&&(identical(other.utmCampaign, utmCampaign) || other.utmCampaign == utmCampaign)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ContactDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.instagramUser, instagramUser) || other.instagramUser == instagramUser)&&(identical(other.message, message) || other.message == message)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.responsePreference, responsePreference) || other.responsePreference == responsePreference)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.isImportant, isImportant) || other.isImportant == isImportant)&&(identical(other.adminNote, adminNote) || other.adminNote == adminNote)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.referrer, referrer) || other.referrer == referrer)&&(identical(other.utmSource, utmSource) || other.utmSource == utmSource)&&(identical(other.utmMedium, utmMedium) || other.utmMedium == utmMedium)&&(identical(other.utmCampaign, utmCampaign) || other.utmCampaign == utmCampaign)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,email,phone,instagramUser,message,subject,responsePreference,status,priority,isRead,readAt,isImportant,adminNote,const DeepCollectionEquality().hash(tags),ipAddress,referrer,utmSource,utmMedium,utmCampaign,createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,name,email,phone,countryCode,instagramUser,message,subject,responsePreference,status,priority,isRead,readAt,isImportant,adminNote,const DeepCollectionEquality().hash(tags),ipAddress,referrer,utmSource,utmMedium,utmCampaign,createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'ContactDetail(id: $id, name: $name, email: $email, phone: $phone, instagramUser: $instagramUser, message: $message, subject: $subject, responsePreference: $responsePreference, status: $status, priority: $priority, isRead: $isRead, readAt: $readAt, isImportant: $isImportant, adminNote: $adminNote, tags: $tags, ipAddress: $ipAddress, referrer: $referrer, utmSource: $utmSource, utmMedium: $utmMedium, utmCampaign: $utmCampaign, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ContactDetail(id: $id, name: $name, email: $email, phone: $phone, countryCode: $countryCode, instagramUser: $instagramUser, message: $message, subject: $subject, responsePreference: $responsePreference, status: $status, priority: $priority, isRead: $isRead, readAt: $readAt, isImportant: $isImportant, adminNote: $adminNote, tags: $tags, ipAddress: $ipAddress, referrer: $referrer, utmSource: $utmSource, utmMedium: $utmMedium, utmCampaign: $utmCampaign, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -353,7 +353,7 @@ abstract mixin class $ContactDetailCopyWith<$Res>  {
   factory $ContactDetailCopyWith(ContactDetail value, $Res Function(ContactDetail) _then) = _$ContactDetailCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String email, String? phone, String? instagramUser, String message, String? subject, String responsePreference, String status, String priority, bool isRead, DateTime? readAt, bool isImportant, String? adminNote, List<String> tags, String? ipAddress, String? referrer, String? utmSource, String? utmMedium, String? utmCampaign, DateTime createdAt, DateTime updatedAt
+ String id, String name, String email, String? phone, String? countryCode, String? instagramUser, String message, String? subject, String responsePreference, String status, String priority, bool isRead, DateTime? readAt, bool isImportant, String? adminNote, List<String> tags, String? ipAddress, String? referrer, String? utmSource, String? utmMedium, String? utmCampaign, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -370,12 +370,13 @@ class _$ContactDetailCopyWithImpl<$Res>
 
 /// Create a copy of ContactDetail
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? instagramUser = freezed,Object? message = null,Object? subject = freezed,Object? responsePreference = null,Object? status = null,Object? priority = null,Object? isRead = null,Object? readAt = freezed,Object? isImportant = null,Object? adminNote = freezed,Object? tags = null,Object? ipAddress = freezed,Object? referrer = freezed,Object? utmSource = freezed,Object? utmMedium = freezed,Object? utmCampaign = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? countryCode = freezed,Object? instagramUser = freezed,Object? message = null,Object? subject = freezed,Object? responsePreference = null,Object? status = null,Object? priority = null,Object? isRead = null,Object? readAt = freezed,Object? isImportant = null,Object? adminNote = freezed,Object? tags = null,Object? ipAddress = freezed,Object? referrer = freezed,Object? utmSource = freezed,Object? utmMedium = freezed,Object? utmCampaign = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as String?,countryCode: freezed == countryCode ? _self.countryCode : countryCode // ignore: cast_nullable_to_non_nullable
 as String?,instagramUser: freezed == instagramUser ? _self.instagramUser : instagramUser // ignore: cast_nullable_to_non_nullable
 as String?,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,subject: freezed == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable
@@ -479,10 +480,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String? instagramUser,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String? countryCode,  String? instagramUser,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ContactDetail() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.instagramUser,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.countryCode,_that.instagramUser,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -500,10 +501,10 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.instagramUser,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String? instagramUser,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String? countryCode,  String? instagramUser,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ContactDetail():
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.instagramUser,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.countryCode,_that.instagramUser,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -520,10 +521,10 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.instagramUser,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String email,  String? phone,  String? instagramUser,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String email,  String? phone,  String? countryCode,  String? instagramUser,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ContactDetail() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.instagramUser,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.countryCode,_that.instagramUser,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -535,13 +536,14 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.instagramUser,
 @JsonSerializable()
 
 class _ContactDetail implements ContactDetail {
-  const _ContactDetail({required this.id, required this.name, required this.email, this.phone, this.instagramUser, required this.message, this.subject, this.responsePreference = 'EMAIL', this.status = 'NEW', this.priority = 'MEDIUM', this.isRead = false, this.readAt, this.isImportant = false, this.adminNote, final  List<String> tags = const [], this.ipAddress, this.referrer, this.utmSource, this.utmMedium, this.utmCampaign, required this.createdAt, required this.updatedAt}): _tags = tags;
+  const _ContactDetail({required this.id, required this.name, required this.email, this.phone, this.countryCode, this.instagramUser, required this.message, this.subject, this.responsePreference = 'EMAIL', this.status = 'NEW', this.priority = 'MEDIUM', this.isRead = false, this.readAt, this.isImportant = false, this.adminNote, final  List<String> tags = const [], this.ipAddress, this.referrer, this.utmSource, this.utmMedium, this.utmCampaign, required this.createdAt, required this.updatedAt}): _tags = tags;
   factory _ContactDetail.fromJson(Map<String, dynamic> json) => _$ContactDetailFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override final  String email;
 @override final  String? phone;
+@override final  String? countryCode;
 @override final  String? instagramUser;
 @override final  String message;
 @override final  String? subject;
@@ -580,16 +582,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ContactDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.instagramUser, instagramUser) || other.instagramUser == instagramUser)&&(identical(other.message, message) || other.message == message)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.responsePreference, responsePreference) || other.responsePreference == responsePreference)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.isImportant, isImportant) || other.isImportant == isImportant)&&(identical(other.adminNote, adminNote) || other.adminNote == adminNote)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.referrer, referrer) || other.referrer == referrer)&&(identical(other.utmSource, utmSource) || other.utmSource == utmSource)&&(identical(other.utmMedium, utmMedium) || other.utmMedium == utmMedium)&&(identical(other.utmCampaign, utmCampaign) || other.utmCampaign == utmCampaign)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ContactDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.countryCode, countryCode) || other.countryCode == countryCode)&&(identical(other.instagramUser, instagramUser) || other.instagramUser == instagramUser)&&(identical(other.message, message) || other.message == message)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.responsePreference, responsePreference) || other.responsePreference == responsePreference)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.isImportant, isImportant) || other.isImportant == isImportant)&&(identical(other.adminNote, adminNote) || other.adminNote == adminNote)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.referrer, referrer) || other.referrer == referrer)&&(identical(other.utmSource, utmSource) || other.utmSource == utmSource)&&(identical(other.utmMedium, utmMedium) || other.utmMedium == utmMedium)&&(identical(other.utmCampaign, utmCampaign) || other.utmCampaign == utmCampaign)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,email,phone,instagramUser,message,subject,responsePreference,status,priority,isRead,readAt,isImportant,adminNote,const DeepCollectionEquality().hash(_tags),ipAddress,referrer,utmSource,utmMedium,utmCampaign,createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,name,email,phone,countryCode,instagramUser,message,subject,responsePreference,status,priority,isRead,readAt,isImportant,adminNote,const DeepCollectionEquality().hash(_tags),ipAddress,referrer,utmSource,utmMedium,utmCampaign,createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'ContactDetail(id: $id, name: $name, email: $email, phone: $phone, instagramUser: $instagramUser, message: $message, subject: $subject, responsePreference: $responsePreference, status: $status, priority: $priority, isRead: $isRead, readAt: $readAt, isImportant: $isImportant, adminNote: $adminNote, tags: $tags, ipAddress: $ipAddress, referrer: $referrer, utmSource: $utmSource, utmMedium: $utmMedium, utmCampaign: $utmCampaign, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ContactDetail(id: $id, name: $name, email: $email, phone: $phone, countryCode: $countryCode, instagramUser: $instagramUser, message: $message, subject: $subject, responsePreference: $responsePreference, status: $status, priority: $priority, isRead: $isRead, readAt: $readAt, isImportant: $isImportant, adminNote: $adminNote, tags: $tags, ipAddress: $ipAddress, referrer: $referrer, utmSource: $utmSource, utmMedium: $utmMedium, utmCampaign: $utmCampaign, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -600,7 +602,7 @@ abstract mixin class _$ContactDetailCopyWith<$Res> implements $ContactDetailCopy
   factory _$ContactDetailCopyWith(_ContactDetail value, $Res Function(_ContactDetail) _then) = __$ContactDetailCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String email, String? phone, String? instagramUser, String message, String? subject, String responsePreference, String status, String priority, bool isRead, DateTime? readAt, bool isImportant, String? adminNote, List<String> tags, String? ipAddress, String? referrer, String? utmSource, String? utmMedium, String? utmCampaign, DateTime createdAt, DateTime updatedAt
+ String id, String name, String email, String? phone, String? countryCode, String? instagramUser, String message, String? subject, String responsePreference, String status, String priority, bool isRead, DateTime? readAt, bool isImportant, String? adminNote, List<String> tags, String? ipAddress, String? referrer, String? utmSource, String? utmMedium, String? utmCampaign, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -617,12 +619,13 @@ class __$ContactDetailCopyWithImpl<$Res>
 
 /// Create a copy of ContactDetail
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? instagramUser = freezed,Object? message = null,Object? subject = freezed,Object? responsePreference = null,Object? status = null,Object? priority = null,Object? isRead = null,Object? readAt = freezed,Object? isImportant = null,Object? adminNote = freezed,Object? tags = null,Object? ipAddress = freezed,Object? referrer = freezed,Object? utmSource = freezed,Object? utmMedium = freezed,Object? utmCampaign = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? countryCode = freezed,Object? instagramUser = freezed,Object? message = null,Object? subject = freezed,Object? responsePreference = null,Object? status = null,Object? priority = null,Object? isRead = null,Object? readAt = freezed,Object? isImportant = null,Object? adminNote = freezed,Object? tags = null,Object? ipAddress = freezed,Object? referrer = freezed,Object? utmSource = freezed,Object? utmMedium = freezed,Object? utmCampaign = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_ContactDetail(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as String?,countryCode: freezed == countryCode ? _self.countryCode : countryCode // ignore: cast_nullable_to_non_nullable
 as String?,instagramUser: freezed == instagramUser ? _self.instagramUser : instagramUser // ignore: cast_nullable_to_non_nullable
 as String?,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,subject: freezed == subject ? _self.subject : subject // ignore: cast_nullable_to_non_nullable

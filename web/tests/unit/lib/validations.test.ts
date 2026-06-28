@@ -101,6 +101,7 @@ describe('Validation Schemas', () => {
         name: 'John Doe',
         email: 'john@example.com',
         phone: '+34123456789',
+        countryCode: '+34',
         message: 'Hello, I need more information',
         responsePreference: 'PHONE',
         privacy: true,
@@ -120,7 +121,9 @@ describe('Validation Schemas', () => {
           message: 'Test message here, needing more detail',
           responsePreference: pref,
           privacy: true,
-          ...(pref === 'PHONE' || pref === 'WHATSAPP' ? { phone: '+34600123456' } : {}),
+          ...(pref === 'PHONE' || pref === 'WHATSAPP'
+            ? { phone: '+34600123456', countryCode: '+34' }
+            : {}),
         }
 
         const result = contactFormSchema.safeParse(contact)
