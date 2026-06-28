@@ -51,6 +51,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const cancelButtonRef = useRef<HTMLButtonElement>(null)
   const confirmButtonRef = useRef<HTMLButtonElement>(null)
 
   // Focus trap and keyboard events
@@ -61,12 +62,18 @@ export function ConfirmDialog({
       if (e.key === 'Escape') onCancel()
     }
 
-    // Focus confirm button when dialog opens
-    confirmButtonRef.current?.focus()
+    // Para variant='danger' enfocamos el botón Cancelar (menos destructivo)
+    // para evitar que un Enter reflejo dispare la acción peligrosa.
+    // Para variant='default' enfocamos Confirmar (flujo normal).
+    if (variant === 'danger') {
+      cancelButtonRef.current?.focus()
+    } else {
+      confirmButtonRef.current?.focus()
+    }
 
     document.addEventListener('keydown', handleEscape)
     return () => document.removeEventListener('keydown', handleEscape)
-  }, [open, onCancel])
+  }, [open, onCancel, variant])
 
   if (!open) return null
 
@@ -124,7 +131,7 @@ export function ConfirmDialog({
 
             {/* Actions */}
             <div className="flex gap-3">
-              <Button variant="outline" onClick={onCancel} className="flex-1">
+              <Button ref={cancelButtonRef} variant="outline" onClick={onCancel} className="flex-1">
                 {cancelText}
               </Button>
               <Button

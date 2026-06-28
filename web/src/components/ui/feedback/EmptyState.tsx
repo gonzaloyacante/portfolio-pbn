@@ -22,8 +22,14 @@ export default function EmptyState({
   onAction,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <span className="mb-4 text-6xl">{icon}</span>
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex flex-col items-center justify-center py-16 text-center"
+    >
+      <span className="mb-4 text-6xl" aria-hidden="true">
+        {icon}
+      </span>
       <h3 className="text-foreground mb-2 text-xl font-semibold">{title}</h3>
       {description && <p className="text-muted-foreground mb-6 max-w-sm">{description}</p>}
       {actionLabel && actionHref && (

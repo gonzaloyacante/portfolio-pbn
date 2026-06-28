@@ -14,12 +14,17 @@ export default function LoadingState({ message = 'Cargando...', size = 'md' }: L
   }
 
   return (
-    <div className="flex flex-col items-center justify-center py-16">
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex flex-col items-center justify-center py-16"
+    >
       <svg
         className={`${sizeClasses[size]} text-primary animate-spin`}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
+        aria-hidden="true"
       >
         <circle
           className="opacity-25"
