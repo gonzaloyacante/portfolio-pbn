@@ -5,7 +5,7 @@ import { Metadata } from 'next'
 import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage } from '@/components/ui'
 import { ServicesPublicHero } from '@/components/features/services/ServicesPublicHero'
 import Link from 'next/link'
-import { MessageCircle, Palette, Star } from 'lucide-react'
+import { Mail, Palette, Star } from 'lucide-react'
 import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
 import { getPublicSiteUrl } from '@/lib/site-url'
@@ -14,10 +14,6 @@ import { buildSeoMetadata } from '@/lib/seo-metadata'
 
 /** Cache público — invalidación explícita desde CMS. */
 export const revalidate = false
-
-function whatsappHref(phoneDigits: string, message: string): string {
-  return `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const [contact, site, services] = await Promise.all([
@@ -61,15 +57,6 @@ export default async function ServicesPage() {
   const location = contactSettings?.location || ''
   const locationSuffix = location ? ` en ${location}` : ''
 
-  // Generate WhatsApp link
-  const whatsappNumber = contactSettings?.whatsapp?.replace(/\D/g, '') || ''
-  const whatsappIntro = whatsappNumber
-    ? whatsappHref(
-        whatsappNumber,
-        '¡Hola! Me gustaría reservar una cita para un servicio de maquillaje.'
-      )
-    : null
-
   const siteUrl = getPublicSiteUrl()
 
   const faqItems = [
@@ -88,7 +75,7 @@ export default async function ServicesPage() {
     },
     {
       question: `¿Cómo puedo reservar un servicio de maquillaje con ${ownerName}?`,
-      answer: `Puedes contactar con ${ownerName} a través del formulario de contacto en ${siteUrl}${ROUTES.public.contact}${contactSettings?.whatsapp ? ' o por WhatsApp' : ''}. Se recomienda reservar con antelación especialmente para bodas y eventos.`,
+      answer: `Puedes contactar con ${ownerName} a través del formulario de contacto en ${siteUrl}${ROUTES.public.contact}. Se recomienda reservar con antelación especialmente para bodas y eventos.`,
     },
     ...services
       .filter((s) => s.price)
@@ -233,27 +220,23 @@ export default async function ServicesPage() {
         )}
 
         {/* Bottom CTA */}
-        {whatsappIntro && (
-          <FadeIn className="mt-16 text-center">
-            <div className="public-services-card mx-auto max-w-2xl rounded-3xl border p-8">
-              <h2 className="public-services-title mb-3 text-2xl font-bold">
-                ¿No encuentras lo que buscas?
-              </h2>
-              <p className="public-services-muted mb-6">
-                Contáctame para servicios personalizados o paquetes especiales.
-              </p>
-              <Link
-                href={whatsappIntro}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="public-services-primary-button inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold shadow-sm transition-opacity hover:opacity-90"
-              >
-                <MessageCircle className="h-5 w-5" />
-                Escribirme por WhatsApp
-              </Link>
-            </div>
-          </FadeIn>
-        )}
+        <FadeIn className="mt-16 text-center">
+          <div className="public-services-card mx-auto max-w-2xl rounded-3xl border p-8">
+            <h2 className="public-services-title mb-3 text-2xl font-bold">
+              ¿No encuentras lo que buscas?
+            </h2>
+            <p className="public-services-muted mb-6">
+              Contáctame para servicios personalizados o paquetes especiales.
+            </p>
+            <Link
+              href={ROUTES.public.contact}
+              className="public-services-primary-button inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold shadow-sm transition-opacity hover:opacity-90"
+            >
+              <Mail className="h-5 w-5" />
+              Contactame
+            </Link>
+          </div>
+        </FadeIn>
       </div>
     </main>
   )

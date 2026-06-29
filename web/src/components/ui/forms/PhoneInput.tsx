@@ -52,7 +52,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
     },
     _ref
   ) => {
-    const [focused, setFocused] = useState(false)
+    const [_focused, setFocused] = useState(false)
     const wrapperRef = useRef<HTMLDivElement>(null)
     const [dropdownWidth, setDropdownWidth] = useState(320)
     const [currentCountry, setCurrentCountry] = useState<ParsedCountry | undefined>(() =>
