@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useId } from 'react'
+import { useState, useRef, useEffect, useId, useLayoutEffect } from 'react'
 import { X, Check, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -51,8 +51,10 @@ const sizeClasses = {
 }
 
 const variantClasses = {
-  default:
-    'border border-input bg-background text-foreground hover:border-foreground/40 focus:border-ring focus:ring-2 focus:ring-ring/20',
+  // Solo fallbacks neutros. NO incluimos `border` porque Tailwind utility
+  // aplica `border-color: #e5e7eb` (gris) que pisa el `border-color` del
+  // `className` del caller. El caller controla TODO lo relativo a border.
+  default: 'bg-background text-foreground focus:ring-2 focus:ring-ring/20',
   filled: 'border-0 bg-muted hover:bg-muted/80 focus:bg-background focus:ring-2 focus:ring-ring/20',
   ghost: 'border-0 bg-transparent hover:bg-muted focus:bg-muted focus:ring-2 focus:ring-ring/20',
 }
@@ -84,15 +86,54 @@ export const Select = ({
 }: SelectProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  // Coordenadas del dropdown relativas al viewport. Se recalculan al abrir
+  // y se actualizan en scroll/resize para que `position: fixed` posicione
+  // correctamente sin importar el stacking context del padre (framer-motion,
+  // transforms, overflow:hidden de los forms públicos).
+  const [dropdownPos, setDropdownPos] = useState<{
+    top: number
+    left: number
+    width: number
+  } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const generatedId = useId()
   const triggerId = id || `select-${generatedId}`
   const listboxId = `${triggerId}-listbox`
 
+  const updatePosition = () => {
+    const trigger = triggerRef.current
+    if (!trigger) return
+    const rect = trigger.getBoundingClientRect()
+    setDropdownPos({
+      top: rect.bottom + 4, // 4px = mt-1
+      left: rect.left,
+      width: rect.width,
+    })
+  }
+
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setDropdownPos(null)
+      return
+    }
+    updatePosition()
+    const handleScrollOrResize = () => updatePosition()
+    window.addEventListener('scroll', handleScrollOrResize, true)
+    window.addEventListener('resize', handleScrollOrResize)
+    return () => {
+      window.removeEventListener('scroll', handleScrollOrResize, true)
+      window.removeEventListener('resize', handleScrollOrResize)
+    }
+  }, [isOpen])
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      const inTrigger = triggerRef.current?.contains(target)
+      const inDropdown = containerRef.current?.contains(target)
+      if (!inTrigger && !inDropdown) {
         setIsOpen(false)
         setSearchTerm('')
       }
@@ -118,14 +159,18 @@ export const Select = ({
   const errorMessage = typeof error === 'string' ? error : undefined
 
   return (
-    <div ref={containerRef} className={cn('w-full', containerClassName)}>
+    <div ref={containerRef} className={cn('relative w-full', containerClassName)}>
       {label && (
-        <label htmlFor={triggerId} className="text-foreground mb-2 block text-sm font-medium">
+        <label
+          htmlFor={triggerId}
+          className="public-contact-form-label mb-2 block text-sm font-semibold"
+        >
           {label}
-          {required && <span className="text-destructive ml-1">*</span>}
+          {required && <span className="public-contact-error ml-1">*</span>}
         </label>
       )}
       <button
+        ref={triggerRef}
         type="button"
         role="combobox"
         className={cn(
@@ -148,11 +193,11 @@ export const Select = ({
         aria-invalid={hasError}
         aria-required={required}
       >
-        <span className="min-w-0 flex-1 truncate">
+        <span className="min-w-0 flex-1 truncate !text-[var(--public-contact-field-text)]">
           {selectedOption ? (
             selectedOption.label
           ) : (
-            <span className="text-muted-foreground">{placeholder}</span>
+            <span className="!text-[var(--public-contact-field-placeholder)]">{placeholder}</span>
           )}
         </span>
         <div className="flex shrink-0 items-center gap-1">
@@ -179,22 +224,27 @@ export const Select = ({
       </button>
       <input type="hidden" name={name} value={value} />
 
-      {isOpen && (
+      {isOpen && dropdownPos && (
         <ul
           id={listboxId}
           className={cn(
-            'border-input bg-popover text-popover-foreground',
-            'absolute right-0 left-0 z-50 mt-1 max-h-60 overflow-auto rounded-lg border py-1 text-sm shadow-xl'
+            '!border !border-[var(--public-contact-field-border)] !bg-[var(--public-contact-field-bg)] !text-[var(--public-contact-field-text)]',
+            'fixed z-50 max-h-60 overflow-auto rounded-xl text-base shadow-xl'
           )}
+          style={{
+            top: dropdownPos.top,
+            left: dropdownPos.left,
+            width: dropdownPos.width,
+          }}
           role="listbox"
         >
           {searchable && (
-            <li className="bg-popover sticky top-0 px-2 pt-1 pb-1">
+            <li className="sticky top-0 bg-[var(--public-contact-field-bg)] px-2 pt-1 pb-1">
               <input
                 ref={inputRef}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:ring-ring/20 w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+                className="w-full rounded-md !border !border-[var(--public-contact-field-border)] !bg-[var(--public-contact-field-bg)] px-3 py-2 text-sm !text-[var(--public-contact-field-text)] placeholder:!text-[var(--public-contact-field-placeholder)] focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
                 placeholder="Buscar..."
                 aria-label="Buscar opción"
                 autoFocus
@@ -202,15 +252,18 @@ export const Select = ({
             </li>
           )}
           {filteredOptions.length === 0 && (
-            <li className="text-muted-foreground px-4 py-2">Sin opciones</li>
+            <li className="px-4 py-2 text-[var(--public-contact-field-placeholder)]">
+              Sin opciones
+            </li>
           )}
           {filteredOptions.map((option) => (
             <li
               key={option.value}
               className={cn(
-                'mx-1 cursor-pointer rounded-md px-4 py-2 transition-colors',
-                'hover:bg-muted',
-                option.value === value && 'bg-primary text-primary-foreground font-semibold'
+                'cursor-pointer px-4 py-3 !text-[var(--public-contact-field-text)] transition-colors first:rounded-t-[calc(theme(borderRadius.xl)-2px)] last:rounded-b-[calc(theme(borderRadius.xl)-2px)]',
+                'hover:bg-[var(--public-contact-option-active-bg)]',
+                option.value === value &&
+                  '!bg-[var(--public-contact-option-active-bg)] !font-semibold !text-[var(--public-contact-option-active-text)]'
               )}
               onClick={() => handleOptionClick(option.value)}
               role="option"
@@ -225,9 +278,7 @@ export const Select = ({
         </ul>
       )}
 
-      {errorMessage && (
-        <p className="text-destructive mt-1.5 text-xs font-medium">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="public-contact-error mt-1 text-sm">{errorMessage}</p>}
     </div>
   )
 }
