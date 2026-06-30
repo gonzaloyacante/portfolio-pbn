@@ -83,7 +83,13 @@ export function ThemeEditor({ initialData, initialColorOverrides = {} }: ThemeEd
     formState: { errors, isSubmitting, isDirty },
   } = form
 
-  // Watch values for live preview
+  // Watch values for live preview.
+  // TODO: refactorizar a `useWatch({ control, name: 'campo' })` por campo
+  // cuando se migre a React Compiler. `watch()` global no es memoizable y
+  // rompe la regla `react-hooks/incompatible-library` del plugin.
+  // Razón: RHF necesita suscribirse a TODOS los campos para el live preview,
+  // `useWatch` solo a uno. El refactor requiere cambiar la estrategia del
+  // preview a suscribirse por grupos de campos.
   const watchedValues = watch()
 
   const LIVE_PREVIEW_STYLE_ID = 'theme-editor-live-ssr-preview'

@@ -112,6 +112,12 @@ model Contact {
   name               String
   email              String
   phone              String?
+  // Código de país del teléfono (ej: "+34", "+54", "+52").
+  // Se guarda APARTE del número local para que la administradora pueda
+  // copiar y pegar el teléfono completo (dialCode + phone) sin fricción.
+  // Opcional: solo se llena cuando responsePreference es PHONE o WHATSAPP.
+  // Registros viejos quedan con NULL (no se hace backfill).
+  countryCode        String?
   message            String    @db.Text
   subject            String? // Optional subject line
   responsePreference String    @default("EMAIL") // EMAIL, PHONE, WHATSAPP, INSTAGRAM

@@ -68,6 +68,7 @@ export async function sendContactEmail(formData: FormData) {
     name: formData.get('name') as string,
     email: formData.get('email') as string,
     phone: formData.get('phone') as string,
+    countryCode: (formData.get('countryCode') as string | null) || undefined,
     message: formData.get('message') as string,
     responsePreference: formData.get('responsePreference') as
       | 'EMAIL'
@@ -118,6 +119,7 @@ function buildSanitizedData(data: ValidatedContactData) {
     name: sanitizeText(data.name),
     email: data.email ? data.email.toLowerCase().trim() : '',
     phone: data.phone ? sanitizeText(data.phone) : undefined,
+    countryCode: data.countryCode || null,
     message: sanitizeText(data.message),
     responsePreference: data.responsePreference,
     instagramUser: data.instagramUser ? sanitizeText(data.instagramUser) : undefined,

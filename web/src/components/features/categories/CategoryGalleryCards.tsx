@@ -44,7 +44,6 @@ export function SortableImageCard({
     <motion.div
       ref={setNodeRef}
       style={style}
-      layout
       initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.85, transition: { duration: 0.25 } }}
@@ -56,15 +55,16 @@ export function SortableImageCard({
       )}
     >
       {/* Drag handle — siempre visible (tenue sin hover, pleno en hover) */}
-      <div
+      <button
+        type="button"
         {...attributes}
         {...listeners}
-        className="bg-foreground/60 hover:bg-foreground/80 absolute top-2 left-2 z-10 cursor-grab rounded-lg p-1.5 opacity-70 backdrop-blur-sm transition-opacity hover:opacity-100 active:cursor-grabbing"
-        aria-label={`Mover ${image.title}`}
+        aria-label={`Mover ${image.title} a otra posición`}
         title="Arrastrar para reordenar"
+        className="bg-foreground/60 hover:bg-foreground/80 absolute top-2 left-2 z-10 flex h-7 w-7 cursor-grab items-center justify-center rounded-lg p-1.5 opacity-70 backdrop-blur-sm transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none active:cursor-grabbing"
       >
         <GripVertical size={14} className="text-background" />
-      </div>
+      </button>
 
       {/* Acciones: destacada, posición, eliminar — siempre visibles */}
       <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 opacity-80 transition-opacity group-hover:opacity-100">

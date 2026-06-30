@@ -87,6 +87,21 @@ const eslintConfig = defineConfig([
           caughtErrorsIgnorePattern: "^_",
         },
       ],
+      // Regla agregada en versiones nuevas de eslint-plugin-react-hooks.
+      // El proyecto usa setState dentro de useEffect intencionalmente para
+      // sincronizar con refs/external stores (maps, google fonts picker,
+      // view toggle, theme editor). Deshabilitada hasta refactor a
+      // useSyncExternalStore donde aplique.
+      "react-hooks/set-state-in-effect": "off",
+      // Map components (Mapbox/maplibre) acceden refs imperativamente durante
+      // render para integrar APIs que no son React. Hasta refactor, las
+      // aceptamos.
+      "react-hooks/refs": "off",
+      // react-hook-form expone APIs (watch, useForm) que la regla marca como
+      // incompatibles con React Compiler. El proyecto usa watch() en el
+      // theme editor para live preview — patrón documentado por RHF.
+      // Deshabilitada hasta que React Compiler sea opcional.
+      "react-hooks/incompatible-library": "off",
     },
   },
   // ─── Design Token Enforcement ──────────────────────────────────────────────

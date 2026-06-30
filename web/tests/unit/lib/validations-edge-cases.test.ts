@@ -128,6 +128,7 @@ describe('contactFormSchema — edge cases', () => {
       message: 'Hello world test',
       responsePreference: 'PHONE',
       phone: '+34600123456',
+      countryCode: '+34',
       privacy: true,
     })
     expect(result.success).toBe(true)
@@ -140,6 +141,7 @@ describe('contactFormSchema — edge cases', () => {
       message: 'Hello world test',
       responsePreference: 'WHATSAPP',
       phone: '+34600123456',
+      countryCode: '+34',
       privacy: true,
     })
     expect(result.success).toBe(true)

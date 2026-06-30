@@ -14,6 +14,16 @@ export const contactFormSchema = z
       .max(100, 'El nombre excede el límite permitido'),
     email: z.string().trim().optional(),
     phone: z.string().trim().max(30).optional(),
+    // Dial code del país seleccionado en el dropdown (ej: "+34", "+54", "+1").
+    // Solo aplica cuando responsePreference es PHONE o WHATSAPP — si el
+    // usuario eligió EMAIL o INSTAGRAM, este campo NO se manda.
+    // El user-agent NO escribe este valor: lo emite `react-international-phone`
+    // apenas se monta el PhoneInput con el defaultCountry='es'.
+    countryCode: z
+      .string()
+      .trim()
+      .regex(/^\+\d{1,4}$/, 'Código de país inválido')
+      .optional(),
     message: z
       .string()
       .trim()
@@ -54,6 +64,16 @@ export const contactFormSchema = z
         code: 'custom',
         path: ['phone'],
         message: 'El teléfono es obligatorio para este tipo de contacto',
+      })
+    }
+    if (
+      (data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') &&
+      !data.countryCode?.trim()
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['countryCode'],
+        message: 'Selecciona el país del teléfono',
       })
     }
     if (data.responsePreference === 'INSTAGRAM' && !data.instagramUser?.trim()) {

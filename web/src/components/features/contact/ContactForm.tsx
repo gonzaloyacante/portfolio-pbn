@@ -72,6 +72,7 @@ export default function ContactForm({ serviceOptions }: ContactFormProps) {
       name: '',
       email: '',
       phone: '',
+      countryCode: '',
       message: '',
       responsePreference: 'INSTAGRAM',
       instagramUser: '',
@@ -146,6 +147,15 @@ export default function ContactForm({ serviceOptions }: ContactFormProps) {
       formData.append('name', data.name)
       formData.append('email', data.email ?? '')
       formData.append('phone', data.phone || '')
+      // countryCode solo aplica cuando el usuario eligió PHONE o WHATSAPP.
+      // Si eligió EMAIL o INSTAGRAM, NO se manda (evita guardar datos
+      // inútiles en la DB).
+      if (
+        (data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') &&
+        data.countryCode
+      ) {
+        formData.append('countryCode', data.countryCode)
+      }
       formData.append('message', data.message)
       formData.append('responsePreference', data.responsePreference)
       formData.append('instagramUser', data.instagramUser || '')
@@ -383,7 +393,13 @@ export default function ContactForm({ serviceOptions }: ContactFormProps) {
               transition={{ duration: 0.18 }}
               className="mt-3"
             >
-              <ContactField preference={responsePreference} register={register} errors={errors} />
+              <ContactField
+                preference={responsePreference}
+                register={register}
+                control={control}
+                setValue={setValue}
+                errors={errors}
+              />
             </motion.div>
           </AnimatePresence>
         </fieldset>

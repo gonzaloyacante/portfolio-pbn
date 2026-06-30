@@ -67,7 +67,6 @@ export default function SortableGrid<T>({
   // curso, NO reseteamos para no perder el reorder en vivo del usuario.
   useEffect(() => {
     if (!isDragging) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLocalItems(items)
     }
   }, [items, isDragging])

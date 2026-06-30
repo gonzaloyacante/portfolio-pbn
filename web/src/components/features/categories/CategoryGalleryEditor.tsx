@@ -21,7 +21,7 @@ import {
 } from '@/actions/gallery-ordering'
 import { saveGalleryImages, deleteCategoryImage } from '@/actions/cms/content'
 import { AnimatePresence, Button, ConfirmDialog } from '@/components/ui'
-import { Save, RotateCcw, ArrowLeft } from 'lucide-react'
+import { Save, Loader2, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
@@ -52,7 +52,7 @@ export default function CategoryGalleryEditor({
   const [isResetting, setIsResetting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
-  const { columnsData, colClass } = useMasonryColumns(images, 3)
+  const { columnsData, colClass } = useMasonryColumns(images, 2)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -62,29 +62,22 @@ export default function CategoryGalleryEditor({
   // ── DnD handlers ─────────────────────────────────────────────────────────
   const handleDragStart = (e: DragStartEvent) => setActiveId(e.active.id as string)
 
-  // Reorder en vivo: cada vez que la card arrastrada pasa por encima de otra,
-  // movemos ambas en el state para que la transición sea visualmente completa
-  // (no un "salto" al soltar).
-  const handleDragOver = (e: DragOverEvent) => {
+  const handleDragOver = (_e: DragOverEvent) => {
+    // No reorder en vivo: se aplica en handleDragEnd para evitar que
+    // useMasonryColumns reasigne cards de columna durante el drag.
+  }
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    setActiveId(null)
     const { active, over } = e
     if (!over || active.id === over.id) return
     setImages((prev) => {
       const from = prev.findIndex((img) => img.id === active.id)
       const to = prev.findIndex((img) => img.id === over.id)
       if (from === -1 || to === -1 || from === to) return prev
+      setIsDirty(true)
       return arrayMove(prev, from, to)
     })
-    setIsDirty(true)
-  }
-
-  const handleDragEnd = (e: DragEndEvent) => {
-    const { active, over } = e
-    setActiveId(null)
-    // El reorder ya se hizo en onDragOver. Acá solo confirmamos dirty state
-    // en caso de que se haya arrastrado sobre sí mismo (no-op).
-    if (over && active.id !== over.id) {
-      setIsDirty(true)
-    }
   }
 
   // ── Featured toggle ───────────────────────────────────────────────────────
@@ -166,8 +159,8 @@ export default function CategoryGalleryEditor({
       const result = await resetCategoryGalleryOrder(categoryId)
       if (result.success) {
         showToast.success('Orden restablecido al original')
-        setIsDirty(false)
         router.refresh()
+        setIsDirty(false)
       } else {
         showToast.error(result.error ?? 'Error al restablecer')
       }
@@ -281,7 +274,7 @@ export default function CategoryGalleryEditor({
               <div className="bg-card border-border flex items-center gap-4 rounded-2xl border px-6 py-3 shadow-2xl">
                 <p className="text-foreground text-sm font-medium">¿Guardar el nuevo orden?</p>
                 <Button size="sm" onClick={handleSave} disabled={isSaving} className="gap-2">
-                  {isSaving ? <RotateCcw size={14} className="animate-spin" /> : <Save size={14} />}
+                  {isSaving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
                   {isSaving ? 'Guardando…' : 'Guardar'}
                 </Button>
               </div>
