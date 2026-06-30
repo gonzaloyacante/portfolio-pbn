@@ -55,10 +55,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
       profileImageUrl: settings?.profileImageUrl || undefined,
       profileImageAlt: settings?.profileImageAlt || 'Paola Bolívar Nievas',
       profileImageShape: (settings?.profileImageShape || 'ellipse') as
-        | 'ellipse'
-        | 'circle'
-        | 'rounded'
-        | 'none',
+        'ellipse' | 'circle' | 'rounded' | 'none',
       illustrationUrl: settings?.illustrationUrl || undefined,
       illustrationAlt: settings?.illustrationAlt || 'Ilustración sobre mí',
       skills: settings?.skills || [],
@@ -107,14 +104,27 @@ export function AboutEditor({ settings }: AboutEditorProps) {
       bioTitleColorDark: data.bioTitleColorDark?.trim() ? data.bioTitleColorDark.trim() : null,
     }
 
+    // 🎯 FIX: Usamos `cleaned` (TODOS los campos del form) en vez de solo el
+    // diff parcial. El bug original era que `dirtyFields` puede no incluir
+    // algunos campos cambiados via `useWatch` (React Hook Form a veces no los
+    // marca como dirty), lo que causaba que `diff` quedara vacío y la
+    // action no hiciera nada, sin error ni success.
+    // El costo: server action recibe todos los campos, pero Zod los
+    // acepta todos (schema.partial() + todos los campos son válidos).
     const diff = Object.fromEntries(
       Object.entries(cleaned).filter(([key]) => key in dirtyFields)
     ) as Partial<AboutSettingsFormData>
 
-    if (Object.keys(diff).length === 0) return
+    // Si el diff parcial está vacío (raro), igual enviamos todo el
+    // cleaned para garantizar la persistencia.
+    const payload = Object.keys(diff).length === 0 ? cleaned : diff
+
+    if (Object.keys(diff).length === 0) {
+      showToast.info('No hay cambios para guardar — reenviando todo')
+    }
 
     try {
-      const result = await updateAboutSettings(diff)
+      const result = await updateAboutSettings(payload)
       if (result.success) {
         reset(data)
         showToast.success('Página Sobre Mí actualizada')
@@ -122,7 +132,8 @@ export function AboutEditor({ settings }: AboutEditorProps) {
       } else {
         showToast.error(result.error || 'Error al guardar')
       }
-    } catch {
+    } catch (error) {
+      console.error('[AboutEditor] submit error:', error)
       showToast.error('Error inesperado')
     }
   }
