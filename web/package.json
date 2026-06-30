@@ -98,7 +98,9 @@
     "tailwindcss": "^4.3.1",
     "web-vitals": "^5.3.0",
     "yet-another-react-lightbox": "^3.32.0",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "babel-plugin-react-compiler": "1.0.0",
+    "typescript": "^6.0.2"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.2.9",
@@ -109,7 +111,6 @@
     "@testing-library/user-event": "^14.6.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@vitejs/plugin-react": "^6.0.3",
-    "babel-plugin-react-compiler": "1.0.0",
     "dotenv": "^17.4.2",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.4",
@@ -118,7 +119,6 @@
     "prettier": "^3.9.1",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tsx": "^4.22.4",
-    "typescript": "^6.0.2",
     "vitest": "^4.1.9"
   },
   "packageManager": "pnpm@10.33.0",
