@@ -139,8 +139,12 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
 
                   <form
                     action={async () => {
-                      await toggleService(s.id)
-                      showToast.success('Estado actualizado')
+                      const result = await toggleService(s.id)
+                      if (result.success) {
+                        showToast.success('Estado actualizado')
+                      } else {
+                        showToast.error(result.error ?? 'Error al cambiar el estado')
+                      }
                     }}
                   >
                     <Button type="submit" variant={s.isActive ? 'secondary' : 'ghost'} size="sm">

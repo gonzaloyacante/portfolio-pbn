@@ -70,20 +70,24 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
   }
 
   const onSettingsSubmit = async (data: ContactSettingsFormData) => {
+    // 🎯 FIX (paridad con AboutEditor): el diff parcial puede quedarse vacío
+    // porque RHF no marca como dirty los cambios hechos via `useWatch`
+    // (switches de visibilidad). Si diff está vacío pero el botón Guardar
+    // se habilitó (`isDirty === true`), significa que SÍ hay cambios y
+    // debemos enviar el payload completo como fallback.
     const diff = Object.fromEntries(
       Object.entries(data).filter(([key]) => key in dirtyFields)
     ) as Partial<ContactSettingsFormData>
 
-    // 🎯 FIX: antes retornaba silenciosamente si diff quedaba vacío
-    // (mismo bug que AboutEditor — dirtyFields no siempre captura todos
-    // los cambios via useWatch). Si no hay cambios, toast explícito.
-    if (Object.keys(diff).length === 0) {
+    const payload = Object.keys(diff).length === 0 && isDirty ? data : diff
+
+    if (Object.keys(payload).length === 0) {
       showToast.info('No hay cambios para guardar')
       return
     }
 
     try {
-      const result = await updateContactSettings(diff)
+      const result = await updateContactSettings(payload)
       if (result.success) {
         reset(data)
         showToast.success('Configuración guardada')

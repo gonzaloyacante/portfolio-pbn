@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { Controller, useForm, type UseFormSetValue } from 'react-hook-form'
 import { type ContactFormData } from '@/lib/validations'
 import { PhoneInput } from '@/components/ui'
@@ -16,6 +17,12 @@ interface ContactFieldProps {
 
 const inputClass = 'public-contact-field w-full rounded-xl px-4 py-3 transition-all'
 
+// País por defecto del PhoneInput (debe matchear `defaultCountry` en PhoneInput.tsx).
+// Se setea automáticamente cuando el usuario elige PHONE/WHATSAPP — sin esto, el
+// callback `onCountryChange` solo se dispara cuando el usuario interactúa con
+// el dropdown de país, dejando el form con `countryCode: ''` y rompiendo Zod.
+const DEFAULT_DIAL_CODE = '+34'
+
 export function ContactField({
   preference,
   register,
@@ -23,6 +30,21 @@ export function ContactField({
   setValue,
   errors,
 }: ContactFieldProps) {
+  // 🐛 FIX: setea el countryCode por defecto cuando se renderiza la sección
+  // PHONE/WHATSAPP. Sin esto, `countryCode` queda '' hasta que el usuario
+  // toque el dropdown de país — Zod rechaza con "Selecciona el país del
+  // teléfono" y el form no se envía.
+  // Solo se ejecuta cuando NO hay ya un countryCode setteado (no pisa cambios
+  // manuales del usuario).
+  useEffect(() => {
+    if (preference !== 'PHONE' && preference !== 'WHATSAPP') return
+    const current = control._formValues?.countryCode
+    if (!current) {
+      setValue('countryCode', DEFAULT_DIAL_CODE, { shouldValidate: false, shouldDirty: false })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preference])
+
   if (preference === 'INSTAGRAM') {
     return (
       <div>

@@ -50,6 +50,31 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
       )
     )
 
+    // 🐛 FIX: validar que al menos una fila fue actualizada por cada imagen.
+    // Sin esto, si el cliente pasa un imageId inválido o de otra categoría,
+    // la acción retorna success sin haber hecho nada. Verificamos a nivel
+    // agregado (más eficiente que un SELECT previo) comparando el total de
+    // filas actualizadas con el largo del array de input.
+    const totalUpdated = await prisma.categoryImage.count({
+      where: {
+        id: { in: imageOrders.map((o) => o.imageId) },
+        categoryId,
+      },
+    })
+    if (totalUpdated !== imageOrders.length) {
+      logger.warn('[updateCategoryGalleryOrder] count mismatch', {
+        categoryId,
+        requested: imageOrders.length,
+        found: totalUpdated,
+      })
+      // No rollback — la transacción ya commitió. Pero devolvemos error
+      // para que el admin sepa que algo no se aplicó.
+      return {
+        success: false,
+        error: `Solo se actualizaron ${totalUpdated} de ${imageOrders.length} imágenes. Verifica que las imágenes pertenezcan a esta categoría.`,
+      }
+    }
+
     revalidatePath(ROUTES.public.portfolio)
     revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
     revalidatePath(ROUTES.admin.categories)
