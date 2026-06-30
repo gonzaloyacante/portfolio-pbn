@@ -74,7 +74,13 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       Object.entries(data).filter(([key]) => key in dirtyFields)
     ) as Partial<ContactSettingsFormData>
 
-    if (Object.keys(diff).length === 0) return
+    // 🎯 FIX: antes retornaba silenciosamente si diff quedaba vacío
+    // (mismo bug que AboutEditor — dirtyFields no siempre captura todos
+    // los cambios via useWatch). Si no hay cambios, toast explícito.
+    if (Object.keys(diff).length === 0) {
+      showToast.info('No hay cambios para guardar')
+      return
+    }
 
     try {
       const result = await updateContactSettings(diff)

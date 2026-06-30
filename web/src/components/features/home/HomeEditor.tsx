@@ -48,7 +48,12 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
     ) as Partial<HomeSettingsData>
 
     if (Object.keys(diff).length === 0) {
+      // 🎯 FIX: diff vacío normalmente significa "no hay cambios". Pero si el
+      // baseline no se inicializó o se desincronizó, podemos terminar acá
+      // sin guardar cambios reales. Mostramos toast explícito para que el
+      // usuario vea feedback en vez del silencio anterior.
       setIsDirty(false)
+      showToast.info('No hay cambios para guardar')
       return
     }
 
